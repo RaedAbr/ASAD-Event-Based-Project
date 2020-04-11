@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
 
-const logSocket = (id: string, message: string) => console.log(`[${id}] ${message}`);
+const logSocket = (id: string, message: any) => console.log(`[${id}] ${message}`);
 
 const pubsub = new EventManager(false);
 
@@ -23,7 +23,7 @@ app.get('/publisher', (req, res) => {
 
 io.on('connection', (socket) => {
 
-  const log = (message: string) => logSocket(socket.id, message);
+  const log = (message: any) => logSocket(socket.id, message);
   log('received connection, waiting for identification...');
 
   socket.on('subscriber', (ack) => {

@@ -7,18 +7,18 @@ import Publisher from "./Publisher";
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(http);
+const io = socketio(server);
 
 const logSocket = (id: string, message: string) => console.log(`[${id}] ${message}`);
 
 const pubsub = new EventManager(false);
 
 app.get('/subscriber', (req, res) => {
-  res.sendFile('./public/subscriber.html');
+  res.sendFile(__dirname + '/public/subscriber.html');
 });
 
 app.get('/publisher', (req, res) => {
-  res.sendFile('./public/publisher.html');
+  res.sendFile(__dirname + '/public/publisher.html');
 });
 
 io.on('connection', (socket) => {

@@ -1,0 +1,23 @@
+<!doctype html>
+
+<html lang="fr">
+<head>
+    <title>Subscriber</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script type="text/javascript">
+    const socket = io(); // connect
+    socket.on('connect', () => {
+      socket.emit('subscriber', () => {
+        socket.on('update', ({ topic, data }) => {
+          console.log(topic, data); // Received new data for given topic
+        });
+      }); // declare subscriber
+    });
+</script>
+</body>
+</html>

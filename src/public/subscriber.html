@@ -1,0 +1,104 @@
+<!doctype html>
+
+<html lang="fr">
+<head>
+    <title>Subscriber</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+
+<body>
+<div class="container pt-5" id="app">
+    <h1>Subscriber</h1>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <h3>My topics</h3>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    v-for="topic in topics" :key="topic">
+                    {{ topic }}
+                    <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">remove</button>
+                </li>
+            </ul>
+        </div>
+        <div class="col">
+            <h3>New topic</h3>
+            <div class="form-group">
+                <label for="topic">Topic name</label>
+                <div class="row no-gutters">
+                    <div class="col flex-grow-1">
+                        <input type="text" class="form-control" id="topic" v-model="newTopic">
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-primary ml-2" @click="addTopic">Add {{ newTopic }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div>
+        <div class="row">
+            <div class="col-3" v-for="item in data" :key="item">
+                <div class="card">
+                    <h3>{{ item.topic }}</h3>
+                    <p>{{ item.data }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+<script type="text/javascript">
+    const vue = new Vue({
+      el: '#app',
+      data() {
+        return {
+          topics: [],
+          newTopic: '',
+          data: [],
+        };
+      },
+      socket: null,
+      mounted() {
+        this.socket = io('localhost:3000'); // connect
+        console.log('connecting...');
+        this.socket.on('connect', () => {
+          console.log('connected...');
+          this.socket.emit('subscriber', () => {
+            console.log('registered as subscriber!');
+            this.socket.on('update', (item) => {
+              console.log(item); // Received new data for given topic
+              this.data.push(item);
+            });
+          });
+        });
+      },
+      methods: {
+        addTopic() {
+          const topic = this.newTopic.trim();
+          if (topic !== '' && !this.topics.includes(topic)) {
+            this.topics.push(topic);
+            if (this.socket !== null) {
+              this.socket.emit('subscribe', topic, (data) => {
+                data.forEach((it) => this.data.push(it));
+              });
+            }
+          }
+          this.newTopic = '';
+        },
+        removeTopic(topic) {
+          const indexTopic = this.topics.findIndex(it => it === topic);
+          if (indexTopic !== -1) this.topics.splice(indexTopic, 1);
+
+          if (this.socket !== null) {
+            this.socket.emit('unsubscribe', topic);
+          }
+        },
+      },
+    });
+</script>
+</body>
+</html>

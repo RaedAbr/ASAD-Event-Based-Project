@@ -2,7 +2,11 @@ import EventManager from "../EventManager";
 import { ISubscriber } from "./ISubscriber";
 
 class Subscriber implements ISubscriber {
-  constructor(private pubsub: EventManager, private onMessage: (topic: string, data: any) => void) {
+  constructor(private pubsub: EventManager, private _onMessage: (topic: string, data: any) => void) {
+  }
+
+  set onMessage(onMessage: (topic: string, data: string) => void) {
+    this._onMessage = onMessage;
   }
 
   subscribe(topic: string) {
@@ -14,7 +18,7 @@ class Subscriber implements ISubscriber {
   }
 
   notify(topic: string, data: any) {
-    this.onMessage(topic, data);
+    this._onMessage(topic, data);
   }
 }
 

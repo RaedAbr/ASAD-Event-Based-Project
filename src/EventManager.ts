@@ -1,5 +1,5 @@
-import Publisher from "./Publisher";
-import Subscriber from "./Subscriber";
+import Publisher from "./model/Publisher";
+import Subscriber from "./model/Subscriber";
 
 type eventData = {
   publishers: Set<Publisher>,

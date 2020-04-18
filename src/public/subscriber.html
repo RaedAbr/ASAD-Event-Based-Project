@@ -82,7 +82,9 @@
           if (topic !== '' && !this.topics.includes(topic)) {
             this.topics.push(topic);
             if (this.socket !== null) {
-              this.socket.emit('subscribe', topic);
+              this.socket.emit('subscribe', topic, (data) => {
+                data.forEach((it) => this.data.push(it));
+              });
             }
           }
           this.newTopic = '';

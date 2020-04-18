@@ -1,48 +1,63 @@
 import Publisher from "./Publisher";
 import Subscriber from "./Subscriber";
 
+type eventData = {
+  publishers: Set<Publisher>,
+  subscribers: Set<Subscriber>,
+  messages: Array<any>
+};
+
 class EventManager {
 
-  publishers: Map<string, Set<Publisher>> = new Map();
-  subscribers: Map<string, Set<Subscriber>> = new Map();
+  events: Map<string, eventData> = new Map();
 
   constructor(private strict: boolean = false) {
   }
 
+  getMessages(event: string) {
+    return this.getEventData(event).messages;
+  }
+
   subscribe(event: string, subscriber: Subscriber) {
-    this.eventExists(event);
-    // @ts-ignore
-    this.subscribers.get(event).add(subscriber);
+    this.getEventData(event).subscribers.add(subscriber);
   }
 
   unsubscribe(event: string, subscriber: Subscriber) {
-    this.eventExists(event);
-    // @ts-ignore
-    this.subscribers.get(event).delete(subscriber);
+    this.getEventData(event).subscribers.delete(subscriber);
   }
 
   register(event: string, publisher: Publisher) {
-    if (!this.publishers.has(event)) this.publishers.set(event, new Set());
-    // @ts-ignore
-    this.publishers.get(event).add(publisher);
+    this.registerEvent(event);
+    this.getEventData(event).publishers.add(publisher);
   }
 
   unregister(event: string, publisher: Publisher) {
-    if (!this.publishers.has(event) && this.strict) throw new Error(`No publisher registered for ${event}`);
     // @ts-ignore
-    this.publishers.get(event).delete(publisher);
+    const eventData = this.getEventData(event);
+    eventData.publishers.delete(publisher);
   }
 
   notify(event: string, payload: any) {
-    this.eventExists(event);
-    // @ts-ignore
-    this.subscribers.get(event).forEach((subscriber) => subscriber.notify(event, payload));
+    const eventData = this.getEventData(event);
+    eventData.subscribers.forEach((subscriber) => subscriber.notify(event, payload));
+    eventData.messages.push(payload);
   }
 
-  private eventExists(event: string) {
-    if (!this.subscribers.has(event)) {
-      if (this.strict) throw new Error(`No subscribers registered on event [${event}]`);
-      else this.subscribers.set(event, new Set());
+  private getEventData(event: string) {
+    if (!this.events.has(event)) {
+      if (this.strict) throw new Error(`No event [${event}]`);
+      else this.registerEvent(event);
+    }
+    return this.events.get(event) as eventData;
+  }
+
+  private registerEvent(event: string) {
+    if (!this.events.has(event)) {
+      this.events.set(event, {
+        publishers: new Set(),
+        subscribers: new Set(),
+        messages: []
+      });
     }
   }
 }

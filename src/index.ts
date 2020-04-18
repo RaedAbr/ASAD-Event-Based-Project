@@ -34,9 +34,10 @@ io.on('connection', (socket) => {
       socket.emit('update', { topic, data });
     });
 
-    socket.on('subscribe', (topic) => {
+    socket.on('subscribe', (topic, ack) => {
       log(`subscribed to ${topic}`);
       subscriber.subscribe(topic);
+      ack(pubsub.getMessages(topic).map(data => ({ topic, data }))); // Send back all messages for topic
     });
 
     socket.on('unsubscribe', (topic) => {
@@ -46,22 +47,22 @@ io.on('connection', (socket) => {
   });
 
   socket.on('publisher', (ack) => {
-    ack();
+      ack();
 
-    log('registered as a publisher!');
-    const publisher = new Publisher(pubsub);
+      log('registered as a publisher!');
+      const publisher = new Publisher(pubsub);
 
-    socket.on('register', (topic) => {
-      publisher.register(topic);
-    });
+      socket.on('register', (topic) => {
+        publisher.register(topic);
+      });
 
-    socket.on('unregister', (topic) => {
-      publisher.unregister(topic);
-    });
+      socket.on('unregister', (topic) => {
+        publisher.unregister(topic);
+      });
 
-    socket.on('publish', ({ topic, data }) => {
-      publisher.publish(topic, data);
-    });
+      socket.on('publish', ({ topic, data }) => {
+        publisher.publish(topic, data);
+      });
   });
 });
 

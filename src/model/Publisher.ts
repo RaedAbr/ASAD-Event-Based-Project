@@ -1,6 +1,8 @@
-import EventManager from "./EventManager";
+import EventManager from "../EventManager";
+import { IPublisher } from "./IPublisher";
 
-class Publisher {
+
+class Publisher implements IPublisher{
   constructor(private pubsub: EventManager) {
   }
 

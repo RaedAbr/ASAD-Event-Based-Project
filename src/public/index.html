@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+  <head>
+    <title>ASAD - Event based</title>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+    <!-- Custom styles for this template -->
+    <link href="https://getbootstrap.com/docs/4.4/examples/sign-in/signin.css" rel="stylesheet" />
+  </head>
+  <body class="text-center" cz-shortcut-listen="true">
+    <div id="app" style="margin-left: auto; margin-right: auto;">
+      <h1 class="h2 mb-3 font-weight-bold">ASAD - Event based</h1>
+      <keep-alive>
+        <component v-bind:is="component" v-on:change-vue="component = $event"></component>
+      </keep-alive>
+    </div>
+
+    <script type="text/x-template" id="index-template">
+      <div class="form-signin">
+        <button class="btn btn-lg btn-primary btn-block" v-on:click="$emit('change-vue', 'login')" type="button">Login</button>
+        <button class="btn btn-lg btn-primary btn-block" v-on:click="$emit('change-vue', 'register')" type="button">Register</button>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="login-template">
+      <div>
+        <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+        <div class="form-group float-left">
+          <button class="page-link" type="button" v-on:click="$emit('change-vue', 'index')">
+            <span aria-hidden="true">&laquo;</span>
+          </button>
+        </div>
+        <div class="form-group">
+          <input type="text" id="username" class="form-control" placeholder="Username" v-model="username" required autofocus>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary" v-on:click="login()" :disabled="username === ''">Login</button>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/x-template" id="register-template">
+      <div>
+        <h1 class="h3 mb-3 font-weight-normal">Register</h1>
+        <div class="form-group float-left">
+          <button class="page-link" type="button" v-on:click="$emit('change-vue', 'index')">
+            <span aria-hidden="true">&laquo;</span>
+          </button>
+        </div>
+        <div class="form-group">
+          <input type="text" id="username" class="form-control" placeholder="Username" v-model="username" required autofocus>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary" v-on:click="register()" :disabled="username === ''">Register</button>
+        </div>
+      </div>
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+      Vue.component("login", {
+        data: function () {
+          return {
+            username: "",
+          };
+        },
+        template: "#login-template",
+        methods: {
+          login() {
+            console.log("Try login" + this.username);
+            this.username = "";
+          }
+        }
+      });
+
+      Vue.component("register", {
+        data: function () {
+          return {
+            username: "",
+          };
+        },
+        template: "#register-template",
+        methods: {
+          register() {
+            console.log("Try register" + this.username);
+            this.username = "";
+          }
+        }
+      });
+
+      Vue.component("index", {
+        template: "#index-template",
+      });
+
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            component: "index",
+          };
+        },
+      });
+    </script>
+  </body>
+</html>

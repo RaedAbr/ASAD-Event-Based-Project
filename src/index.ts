@@ -2,8 +2,8 @@ import express from 'express';
 import http from 'http';
 import socketio from 'socket.io';
 import EventManager from './EventManager';
-import Subscriber from "./Subscriber";
-import Publisher from "./Publisher";
+import Subscriber from "./model/Subscriber";
+import Publisher from "./model/Publisher";
 
 const app = express();
 const server = http.createServer(app);
@@ -12,6 +12,10 @@ const io = socketio(server);
 const logSocket = (id: string, message: any) => console.log(`[${id}] ${message}`);
 
 const pubsub = new EventManager(false);
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/');
+});
 
 app.get('/subscriber', (req, res) => {
   res.sendFile(__dirname + '/public/subscriber.html');
@@ -63,6 +67,10 @@ io.on('connection', (socket) => {
       publisher.publish(topic, data);
     });
   });
+
+  socket.on("disconnect", () => {
+    log("Disconnected");
+  })
 });
 
 server.listen(3000, () => {

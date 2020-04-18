@@ -1,5 +1,5 @@
-import Publisher from "./Publisher";
-import Subscriber from "./Subscriber";
+import Publisher from "./model/Publisher";
+import Subscriber from "./model/Subscriber";
 
 class EventManager {
 
@@ -13,24 +13,28 @@ class EventManager {
     this.eventExists(event);
     // @ts-ignore
     this.subscribers.get(event).add(subscriber);
+    console.log(this.subscribers);
   }
 
   unsubscribe(event: string, subscriber: Subscriber) {
     this.eventExists(event);
     // @ts-ignore
     this.subscribers.get(event).delete(subscriber);
+    console.log(this.subscribers);
   }
 
   register(event: string, publisher: Publisher) {
     if (!this.publishers.has(event)) this.publishers.set(event, new Set());
     // @ts-ignore
     this.publishers.get(event).add(publisher);
+    console.log(this.publishers);
   }
 
   unregister(event: string, publisher: Publisher) {
     if (!this.publishers.has(event) && this.strict) throw new Error(`No publisher registered for ${event}`);
     // @ts-ignore
     this.publishers.get(event).delete(publisher);
+    console.log(this.publishers);
   }
 
   notify(event: string, payload: any) {

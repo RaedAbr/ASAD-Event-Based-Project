@@ -1,6 +1,7 @@
-import EventManager from "./EventManager";
+import EventManager from "../EventManager";
+import { ISubscriber } from "./ISubscriber";
 
-class Subscriber {
+class Subscriber implements ISubscriber {
   constructor(private pubsub: EventManager, private onMessage: (topic: string, data: any) => void) {
   }
 

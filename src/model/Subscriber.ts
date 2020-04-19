@@ -1,11 +1,22 @@
 import EventManager from "../EventManager";
-import { ISubscriber } from "./ISubscriber";
+import ISubscriber from "./ISubscriber";
 
+/**
+ * Subscriber logic
+ *
+ * @class Subscriber
+ * @implements {ISubscriber}
+ */
 class Subscriber implements ISubscriber {
-  constructor(private pubsub: EventManager, private _onMessage: (topic: string, data: any) => void) {
-  }
+  /**
+   * Creates an instance of Subscriber.
+   * @param {EventManager} pubsub Manage events related to topics, subscribers and publishers
+   * @param {(topic: string, content: any) => void} _onMessage Action to perform when new topic content is published
+   * @memberof Subscriber
+   */
+  constructor(private pubsub: EventManager, private _onMessage: (topic: string, content: any) => void) {}
 
-  set onMessage(onMessage: (topic: string, data: string) => void) {
+  set onMessage(onMessage: (topic: string, content: string) => void) {
     this._onMessage = onMessage;
   }
 
@@ -17,8 +28,12 @@ class Subscriber implements ISubscriber {
     this.pubsub.unsubscribe(topic, this);
   }
 
-  notify(topic: string, data: any) {
-    this._onMessage(topic, data);
+  notify(topic: string, content: any) {
+    this._onMessage(topic, content);
+  }
+
+  getSubscriberTopics(): string[] {
+    return this.pubsub.getSubscriberTopics(this);
   }
 }
 

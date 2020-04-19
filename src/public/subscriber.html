@@ -1,104 +1,139 @@
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="fr">
-<head>
+  <head>
     <title>ASAD - Subscriber</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-</head>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+  </head>
 
-<body>
-<div class="container pt-5" id="app">
-    <h1>Subscriber</h1>
-    <hr />
-    <div class="row">
+  <body>
+    <div class="container pt-5" id="app">
+      <h1>
+        Welcome subscriber <em><ins>{{ username }}</ins></em>
+      </h1>
+      <hr />
+      <div class="row">
         <div class="col">
-            <h3>My topics</h3>
-            <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center"
-                    v-for="topic in topics" :key="topic">
-                    {{ topic }}
-                    <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">remove</button>
-                </li>
-            </ul>
+          <h3>My topics</h3>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center" v-for="topic in topics">
+              {{ topic }}
+              <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">remove</button>
+            </li>
+          </ul>
         </div>
         <div class="col">
-            <h3>New topic</h3>
-            <div class="form-group">
-                <label for="topic">Topic name</label>
-                <div class="row no-gutters">
-                    <div class="col flex-grow-1">
-                        <input type="text" class="form-control" id="topic" v-model="newTopic">
-                    </div>
-                    <div class="col">
-                        <button type="button" class="btn btn-primary ml-2" @click="addTopic">Add {{ newTopic }}</button>
-                    </div>
-                </div>
+          <h3>Topics list</h3>
+          <small>Click to subscribe</small>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <button @click="addTopic(topic)" v-for="topic in remainTopics" type="button" class="btn btn-primary badge badge-primary badge-pill">
+                {{ topic }}
+              </button>
+            </li>
+          </ul>
+          <!-- <div class="form-group">
+            <label for="topic">Topic name</label>
+            <div class="row no-gutters">
+              <div class="col flex-grow-1">
+                <input type="text" class="form-control" id="topic" v-model="newTopic" />
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-primary ml-2" @click="addTopic">Add</button>
+              </div>
             </div>
+          </div> -->
         </div>
-    </div>
-    <hr />
-    <div>
+      </div>
+      <hr />
+      <div>
         <div class="row">
-            <div class="col-3" v-for="item in data" :key="item">
-                <div class="card">
-                    <h3>{{ item.topic }}</h3>
-                    <p>{{ item.data }}</p>
-                </div>
+          <div class="col-3" v-for="article in articles">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
+                <p class="card-text">{{ article.content }}</p>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-<script type="text/javascript">
-    const vue = new Vue({
-      el: '#app',
-      data() {
-        return {
-          topics: [],
-          newTopic: '',
-          data: [],
-        };
-      },
-      socket: null,
-      mounted() {
-        this.socket = io('localhost:3000'); // connect
-        console.log('connecting...');
-        this.socket.on('connect', () => {
-          console.log('connected...');
-          this.socket.emit('subscriber', () => {
-            console.log('registered as subscriber!');
-            this.socket.on('update', (item) => {
-              console.log(item); // Received new data for given topic
-              this.data.push(item);
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script type="text/javascript">
+      var router = new VueRouter({
+        mode: "history",
+        routes: [],
+      });
+
+      const vue = new Vue({
+        router,
+        el: "#app",
+        data() {
+          return {
+            topics: [],
+            allTopics: [],
+            articles: [],
+            username: "",
+          };
+        },
+        socket: null,
+        mounted() {
+          this.username = this.$route.query.username;
+          console.log(`username: ${this.username}`);
+          this.socket = io("localhost:3000", { query: { username: this.username } }); // connect
+          console.log("connecting...");
+          this.socket.on("connect", () => {
+            console.log("connected...");
+            this.socket.emit("subscriber", null, (data) => {
+              console.log("registered as subscriber!");
+              console.log(data.articles);
+              this.articles = data.articles;
+              this.topics = data.topics;
+              this.allTopics = data.allTopics;
+              this.socket.on("update", (article) => {
+                console.log(article); // Received new articles for given topic
+                this.articles.push(article);
+              });
+              this.socket.on("addedTopic", (data) => {
+                if (!this.allTopics.includes(data.topic)) {
+                  this.allTopics.push(data.topic);
+                }
+              });
             });
           });
-        });
-      },
-      methods: {
-        addTopic() {
-          const topic = this.newTopic.trim();
-          if (topic !== '' && !this.topics.includes(topic)) {
-            this.topics.push(topic);
-            if (this.socket !== null) {
-              this.socket.emit('subscribe', topic, (data) => {
-                data.forEach((it) => this.data.push(it));
-              });
-            }
-          }
-          this.newTopic = '';
         },
-        removeTopic(topic) {
-          const indexTopic = this.topics.findIndex(it => it === topic);
-          if (indexTopic !== -1) this.topics.splice(indexTopic, 1);
+        computed: {
+          remainTopics: function() {
+            return this.allTopics.filter(topic => !this.topics.includes(topic));
+          }
+        },
+        methods: {
+          addTopic(topic) {
+              this.topics.push(topic);
+              if (this.socket !== null) {
+                this.socket.emit("subscribe", topic, (articles) => {
+                  this.articles.push(...articles);
+                });
+              }
+          },
+          removeTopic(topic) {
+            this.topics = this.topics.filter((t) => t != topic);
+            this.articles = this.articles.filter((a) => a.topic != topic);
 
-          if (this.socket !== null) {
-            this.socket.emit('unsubscribe', topic);
-          }
+            if (this.socket !== null) {
+              this.socket.emit("unsubscribe", topic);
+            }
+          },
         },
-      },
-    });
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>

@@ -1,10 +1,19 @@
 import EventManager from "../EventManager";
-import { IPublisher } from "./IPublisher";
+import IPublisher from "./IPublisher";
 
-
-class Publisher implements IPublisher{
-  constructor(private pubsub: EventManager) {
-  }
+/**
+ * Publisher logic
+ *
+ * @class Publisher
+ * @implements {IPublisher}
+ */
+class Publisher implements IPublisher {
+  /**
+   * Creates an instance of Publisher.
+   * @param {EventManager} pubsub Manage events related to topics, subscribers and publishers
+   * @memberof Publisher
+   */
+  constructor(private pubsub: EventManager) {}
 
   register(topic: string) {
     this.pubsub.register(topic, this);
@@ -14,8 +23,12 @@ class Publisher implements IPublisher{
     this.pubsub.unregister(topic, this);
   }
 
-  publish(topic: string, data: any) {
-    this.pubsub.notify(topic, data);
+  publish(topic: string, content: any) {
+    this.pubsub.notify(topic, content);
+  }
+
+  getPublisherTopics() {
+    return this.pubsub.getPublisherTopics(this);
   }
 }
 

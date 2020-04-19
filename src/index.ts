@@ -84,7 +84,8 @@ io.on("connection", (socket) => {
       // subscribes with their contents
       const topics = subscriber.getSubscriberTopics();
       const articles = topics.flatMap((topic) => pubsub.getContentList(topic).map((content) => ({ topic, content })));
-      ack({ topics: topics, articles: articles });
+      const allTopics = pubsub.getAllTopicList();
+      ack({ topics: topics, articles: articles, allTopics: allTopics });
 
       socket.on("subscribe", (topic, ack) => {
         log(`subscribed to ${topic}`);
@@ -107,6 +108,8 @@ io.on("connection", (socket) => {
 
       socket.on("register", (topic) => {
         publisher.register(topic);
+        // send notification with the new topic to all connected users
+        io.emit("addedTopic", {topic: topic});
       });
 
       socket.on("unregister", (topic) => {

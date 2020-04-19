@@ -19,6 +19,16 @@ class EventManager {
   private topics: Map<string, ITopicData> = new Map();
 
   /**
+   * Get all topics list
+   *
+   * @returns {string[]} Topics list
+   * @memberof EventManager
+   */
+  getAllTopicList(): string[] {
+    return Array.from(this.topics.keys());
+  }
+
+  /**
    * Get list of published content of given topic
    *
    * @param {string} topic Topic name

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+  <head>
+    <title>ASAD - Subscriber</title>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="container pt-5" id="app">
+      <h1>
+        Welcome subscriber <em><ins>{{ username }}</ins></em>
+      </h1>
+      <hr />
+      <div class="row">
+        <div class="col">
+          <h3>My topics</h3>
+          <ul class="list-group">
+            <li v-for="topic in topics" class="list-group-item">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ topic.topic }}</h5>
+                <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic.topic)">remove</button>
+              </div>
+              <small><em><strong>Publishers:</strong></em> - <span v-for="pub in topic.publishers">{{ pub }} - </span></small>
+            </li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Topics list</h3>
+          <small>Click to subscribe</small>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <button v-for="topic in remainTopics" @click="addTopic(topic)" type="button" class="btn btn-primary badge badge-primary badge-pill">
+                {{ topic }}
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <hr />
+      <div>
+        <div class="row">
+          <div class="col-3" v-for="article in articles">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
+                <small>By <em><strong>{{ article.content.publisher }}</strong></em></small>
+                <p class="card-text">{{ article.content.text }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script type="text/javascript">
+      var router = new VueRouter({
+        mode: "history",
+        routes: [],
+      });
+
+      const vue = new Vue({
+        router,
+        el: "#app",
+        data() {
+          return {
+            topics: [], // Type: {topic: string, publishers: string[]}[]
+            allTopics: [], // Type: string[]
+            articles: [],
+            username: "",
+          };
+        },
+        socket: null,
+        mounted() {
+          this.username = this.$route.query.username;
+          console.log(`username: ${this.username}`);
+          this.socket = io("localhost:3000", { query: { username: this.username } }); // connect
+          console.log("connecting...");
+          this.socket.on("connect", () => {
+            console.log("connected...");
+            this.socket.emit("subscriber", null, (data) => {
+              console.log("registered as subscriber!");
+              console.log(data.articles);
+              this.articles = data.articles;
+              this.topics = data.topics;
+              this.allTopics = data.allTopics;
+              this.socket.on("update", (article) => {
+                console.log(article); // Received new articles for given topic
+                this.articles.push(article);
+              });
+              this.socket.on("topicRegistered", (topic, publisher) => {
+                if (!this.allTopics.includes(topic)) {
+                  this.allTopics.push(topic);
+                }
+                if (this.topics.find(t => t.topic == topic)) {
+                  this.topics.find(t => t.topic == topic).publishers.push(publisher);
+                }
+              });
+              this.socket.on("topicUnregistered", (topic, publisher) => {
+                if (this.topics.find(t => t.topic == topic)) {
+                  const publishers = this.topics.find(t => t.topic == topic).publishers;
+                  this.topics.find(t => t.topic == topic).publishers = publishers.filter(p => p != publisher);
+                }
+              });
+            });
+          });
+        },
+        computed: {
+          remainTopics: function() {
+            return this.allTopics.filter(topic => !this.topics.find(t => t.topic === topic));
+          }
+        },
+        methods: {
+          addTopic(topic) {
+              if (this.socket !== null) {
+                this.socket.emit("subscribe", topic, (resp) => {
+                  this.topics.push(resp.topic);
+                  this.articles.push(...resp.articles);
+                });
+              }
+          },
+          removeTopic(topic) {
+            this.topics = this.topics.filter((t) => t.topic != topic);
+            this.articles = this.articles.filter((a) => a.topic != topic);
+
+            if (this.socket !== null) {
+              this.socket.emit("unsubscribe", topic);
+            }
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

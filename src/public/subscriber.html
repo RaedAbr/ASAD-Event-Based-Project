@@ -49,7 +49,8 @@
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
-                <p class="card-text">{{ article.content }}</p>
+                <small>By <em><strong>{{ article.content.publisher }}</strong></em></small>
+                <p class="card-text">{{ article.content.text }}</p>
               </div>
             </div>
           </div>
@@ -118,7 +119,6 @@
         },
         methods: {
           addTopic(topic) {
-              // this.topics.push(topic); //NO
               if (this.socket !== null) {
                 this.socket.emit("subscribe", topic, (resp) => {
                   this.topics.push(resp.topic);

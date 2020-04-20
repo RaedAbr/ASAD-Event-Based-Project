@@ -24,10 +24,10 @@ interface ITopicData {
   /**
    * Topic content list
    *
-   * @type {Array<any>}
+   * @type {{text: string, publisher: string}[]}
    * @memberof topicData
    */
-  contentList: Array<any>;
+  contentList: {text: string, publisher: string}[];
 };
 
 export default ITopicData;

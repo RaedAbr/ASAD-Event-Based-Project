@@ -27,7 +27,7 @@ interface IPublisher {
    * @param {*} content Content to publish
    * @memberof IPublisher
    */
-  publish(topic: string, content: any): void;
+  publish(topic: string, text: any): void;
 
   /**
    * Get list of topic of this publisher

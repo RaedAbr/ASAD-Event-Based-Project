@@ -35,7 +35,7 @@ class EventManager {
    * @returns Topic content list
    * @memberof EventManager
    */
-  getContentList(topic: string) {
+  getContentList(topic: string): {text: string, publisher: string}[] {
     return this.getTopicData(topic).contentList;
   }
   
@@ -123,10 +123,10 @@ class EventManager {
    * Notify subscribers with new topic content
    *
    * @param {string} topic Topic name
-   * @param {*} content Topic content
+   * @param {{text: string, publisher: string}} content Topic content
    * @memberof EventManager
    */
-  notify(topic: string, content: any) {
+  notify(topic: string, content: {text: string, publisher: string}) {
     const topicData = this.getTopicData(topic);
     topicData.subscribers.forEach((subscriber) => subscriber.notify(topic, content));
     topicData.contentList.push(content);

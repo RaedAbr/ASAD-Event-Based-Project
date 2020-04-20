@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
       // send back to subscriber the list of topics to which he
       // subscribes with their contents
       const topics: {topic: string, publishers: string[]}[] = subscriber.getSubscriberTopics();
-      const articles = topics.flatMap((topic) => pubsub.getContentList(topic.topic).map((content) => ({ topic, content })));
+      const articles = topics.flatMap((topic) => pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content })));
       const allTopics = pubsub.getAllTopicList();
       ack({ topics: topics, articles: articles, allTopics: allTopics });
 
@@ -122,8 +122,8 @@ io.on("connection", (socket) => {
         io.emit("topicUnregistered", topic, publisher.username);
       });
 
-      socket.on("publish", ({ topic, content }) => {
-        publisher.publish(topic, content);
+      socket.on("publish", (topic, text) => {
+        publisher.publish(topic, text);
       });
     }
   });

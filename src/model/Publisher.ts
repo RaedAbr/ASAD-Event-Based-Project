@@ -25,8 +25,8 @@ class Publisher implements IPublisher {
     this.pubsub.unregister(topic, this);
   }
 
-  publish(topic: string, content: any) {
-    this.pubsub.notify(topic, content);
+  publish(topic: string, text: string) {
+    this.pubsub.notify(topic, {text: text, publisher: this.username});
   }
 
   getPublisherTopics() {

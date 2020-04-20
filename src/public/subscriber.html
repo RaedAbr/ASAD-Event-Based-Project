@@ -32,22 +32,11 @@
           <small>Click to subscribe</small>
           <ul class="list-group">
             <li class="list-group-item">
-              <button @click="addTopic(topic)" v-for="topic in remainTopics" type="button" class="btn btn-primary badge badge-primary badge-pill">
+              <button v-for="topic in remainTopics" @click="addTopic(topic)" type="button" class="btn btn-primary badge badge-primary badge-pill">
                 {{ topic }}
               </button>
             </li>
           </ul>
-          <!-- <div class="form-group">
-            <label for="topic">Topic name</label>
-            <div class="row no-gutters">
-              <div class="col flex-grow-1">
-                <input type="text" class="form-control" id="topic" v-model="newTopic" />
-              </div>
-              <div class="col">
-                <button type="button" class="btn btn-primary ml-2" @click="addTopic">Add</button>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
       <hr />
@@ -102,9 +91,9 @@
                 console.log(article); // Received new articles for given topic
                 this.articles.push(article);
               });
-              this.socket.on("addedTopic", (data) => {
-                if (!this.allTopics.includes(data.topic)) {
-                  this.allTopics.push(data.topic);
+              this.socket.on("addedTopic", (topic) => {
+                if (!this.allTopics.includes(topic)) {
+                  this.allTopics.push(topic);
                 }
               });
             });

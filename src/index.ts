@@ -104,12 +104,14 @@ io.on("connection", (socket) => {
     log(`user "${username}" connected as a publisher!`);
     const publisher = users.get(username)! as Publisher;
     if (publisher) {
-      ack(publisher.getPublisherTopics());
+      const topics = publisher.getPublisherTopics();
+      const allTopics = pubsub.getAllTopicList();
+      ack({ topics: topics, allTopics: allTopics });
 
       socket.on("register", (topic) => {
         publisher.register(topic);
         // send notification with the new topic to all connected users
-        io.emit("addedTopic", {topic: topic});
+        io.emit("addedTopic", topic);
       });
 
       socket.on("unregister", (topic) => {

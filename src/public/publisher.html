@@ -25,28 +25,14 @@
               :class="{ active: selected === topic }"
             >
             <div class="container">
-              <!-- <div class="row">
-                <div class="col-auto mr-auto" @click="selected = topic">{{ topic }}</div>
-                <div class="col-auto">
-                  <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic, $event)">remove</button>
-                </div>
-              </div> -->
               <div class="row">
                 <div class="col" @click="selected = topic">
                   {{ topic }}
                 </div>
                 <div class="col-3">
-                  <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic, $event)">remove</button>
+                  <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">remove</button>
                 </div>
               </div>
-              <!-- <div class="row">
-                <div class="col align-self-start" @click="selected = topic">
-                  {{ topic }}
-                </div>
-                <div class="col align-self-end">
-                  <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic, $event)">remove</button>
-                </div>
-              </div> -->
             </div>
             </li>
           </ul>
@@ -149,8 +135,7 @@
             }
             this.newTopic = "";
           },
-          removeTopic(topic, event) {
-            event.preventDefault();
+          removeTopic(topic) {
             this.topics = this.topics.filter(t => t != topic);
             this.selected = null;
 

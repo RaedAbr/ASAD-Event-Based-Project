@@ -1,5 +1,6 @@
 import EventManager from "../EventManager";
 import ISubscriber from "./ISubscriber";
+import ITopicData from "./ITopicData";
 
 /**
  * Subscriber logic
@@ -32,7 +33,7 @@ class Subscriber implements ISubscriber {
     this._onMessage(topic, content);
   }
 
-  getSubscriberTopics(): string[] {
+  getSubscriberTopics(): {topic: string, publishers: string[]}[] {
     return this.pubsub.getSubscriberTopics(this);
   }
 }

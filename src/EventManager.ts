@@ -60,14 +60,14 @@ class EventManager {
    * Get topics list of given subscriber
    *
    * @param {Subscriber} subscriber Subscriber to topics
-   * @returns {string[]} List of topics
+   * @returns {{topic: string, publishers: string[]}[]} List of topics
    * @memberof EventManager
    */
-  getSubscriberTopics(subscriber: Subscriber): string[] {
-    const topics: string[] = [];
+  getSubscriberTopics(subscriber: Subscriber): {topic: string, publishers: string[]}[] {
+    const topics: {topic: string, publishers: string[]}[] = [];
     this.topics.forEach((eventData, topic) => {
       if (eventData.subscribers.has(subscriber)) {
-        topics.push(topic);
+        topics.push({topic, publishers: Array.from(eventData.publishers.values()).map(p => p.username)});
       }
     });
     return topics;

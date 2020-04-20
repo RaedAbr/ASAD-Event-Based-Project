@@ -10,10 +10,12 @@ import IPublisher from "./IPublisher";
 class Publisher implements IPublisher {
   /**
    * Creates an instance of Publisher.
+   * 
+   * @param {string} username Publisher name
    * @param {EventManager} pubsub Manage events related to topics, subscribers and publishers
    * @memberof Publisher
    */
-  constructor(private pubsub: EventManager) {}
+  constructor(public username: string, private pubsub: EventManager) {}
 
   register(topic: string) {
     this.pubsub.register(topic, this);
@@ -23,8 +25,8 @@ class Publisher implements IPublisher {
     this.pubsub.unregister(topic, this);
   }
 
-  publish(topic: string, content: any) {
-    this.pubsub.notify(topic, content);
+  publish(topic: string, text: string) {
+    this.pubsub.notify(topic, {text: text, publisher: this.username});
   }
 
   getPublisherTopics() {

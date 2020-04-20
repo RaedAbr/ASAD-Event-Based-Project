@@ -6,6 +6,7 @@ import Subscriber from "./model/Subscriber";
 import Publisher from "./model/Publisher";
 import IPublisher from "./model/IPublisher";
 import ISubscriber from "./model/ISubscriber";
+import ITopicData from "./model/ITopicData";
 
 const app = express();
 const server = http.createServer(app);
@@ -41,7 +42,7 @@ app.post("/register/:userType/:username", (req, res) => {
     return;
   }
   if (userType === "publisher") {
-    users.set(username, new Publisher(pubsub));
+    users.set(username, new Publisher(username, pubsub));
   } else if (userType === "subscriber") {
     users.set(username, new Subscriber(pubsub, () => {}));
   }
@@ -82,15 +83,16 @@ io.on("connection", (socket) => {
       };
       // send back to subscriber the list of topics to which he
       // subscribes with their contents
-      const topics = subscriber.getSubscriberTopics();
-      const articles = topics.flatMap((topic) => pubsub.getContentList(topic).map((content) => ({ topic, content })));
+      const topics: {topic: string, publishers: string[]}[] = subscriber.getSubscriberTopics();
+      const articles = topics.flatMap((topic) => pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content })));
       const allTopics = pubsub.getAllTopicList();
       ack({ topics: topics, articles: articles, allTopics: allTopics });
 
       socket.on("subscribe", (topic, ack) => {
         log(`subscribed to ${topic}`);
         subscriber.subscribe(topic);
-        ack(pubsub.getContentList(topic).map((content) => ({ topic, content }))); // Send back all messages for topic
+        const topicObject: {topic: string, publishers: string[]} = subscriber.getSubscriberTopics().find(t => t.topic === topic)!!;
+        ack({topic: topicObject, articles: pubsub.getContentList(topic).map((content) => ({ topic, content }))}); // Send back all messages for topic
       });
 
       socket.on("unsubscribe", (topic) => {
@@ -104,20 +106,24 @@ io.on("connection", (socket) => {
     log(`user "${username}" connected as a publisher!`);
     const publisher = users.get(username)! as Publisher;
     if (publisher) {
-      ack(publisher.getPublisherTopics());
+      const topics = publisher.getPublisherTopics();
+      const allTopics = pubsub.getAllTopicList();
+      ack({ topics: topics, allTopics: allTopics });
 
       socket.on("register", (topic) => {
         publisher.register(topic);
         // send notification with the new topic to all connected users
-        io.emit("addedTopic", {topic: topic});
+        io.emit("topicRegistered", topic, publisher.username);
       });
 
       socket.on("unregister", (topic) => {
         publisher.unregister(topic);
+        // send notification with the unregistered topic to all connected users
+        io.emit("topicUnregistered", topic, publisher.username);
       });
 
-      socket.on("publish", ({ topic, content }) => {
-        publisher.publish(topic, content);
+      socket.on("publish", (topic, text) => {
+        publisher.publish(topic, text);
       });
     }
   });

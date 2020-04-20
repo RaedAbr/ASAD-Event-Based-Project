@@ -1,5 +1,6 @@
 import EventManager from "../EventManager";
 import ISubscriber from "./ISubscriber";
+import ITopicData from "./ITopicData";
 
 /**
  * Subscriber logic
@@ -14,9 +15,9 @@ class Subscriber implements ISubscriber {
    * @param {(topic: string, content: any) => void} _onMessage Action to perform when new topic content is published
    * @memberof Subscriber
    */
-  constructor(private pubsub: EventManager, private _onMessage: (topic: string, content: any) => void) {}
+  constructor(private pubsub: EventManager, private _onMessage: (topic: string, content: {text: string, publisher: string}) => void) {}
 
-  set onMessage(onMessage: (topic: string, content: string) => void) {
+  set onMessage(onMessage: (topic: string, content: {text: string, publisher: string}) => void) {
     this._onMessage = onMessage;
   }
 
@@ -28,11 +29,11 @@ class Subscriber implements ISubscriber {
     this.pubsub.unsubscribe(topic, this);
   }
 
-  notify(topic: string, content: any) {
+  notify(topic: string, content: {text: string, publisher: string}) {
     this._onMessage(topic, content);
   }
 
-  getSubscriberTopics(): string[] {
+  getSubscriberTopics(): {topic: string, publishers: string[]}[] {
     return this.pubsub.getSubscriberTopics(this);
   }
 }

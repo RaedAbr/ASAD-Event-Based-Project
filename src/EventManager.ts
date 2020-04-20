@@ -35,7 +35,7 @@ class EventManager {
    * @returns Topic content list
    * @memberof EventManager
    */
-  getContentList(topic: string) {
+  getContentList(topic: string): {text: string, publisher: string}[] {
     return this.getTopicData(topic).contentList;
   }
   
@@ -60,14 +60,14 @@ class EventManager {
    * Get topics list of given subscriber
    *
    * @param {Subscriber} subscriber Subscriber to topics
-   * @returns {string[]} List of topics
+   * @returns {{topic: string, publishers: string[]}[]} List of topics
    * @memberof EventManager
    */
-  getSubscriberTopics(subscriber: Subscriber): string[] {
-    const topics: string[] = [];
+  getSubscriberTopics(subscriber: Subscriber): {topic: string, publishers: string[]}[] {
+    const topics: {topic: string, publishers: string[]}[] = [];
     this.topics.forEach((eventData, topic) => {
       if (eventData.subscribers.has(subscriber)) {
-        topics.push(topic);
+        topics.push({topic, publishers: Array.from(eventData.publishers.values()).map(p => p.username)});
       }
     });
     return topics;
@@ -123,10 +123,10 @@ class EventManager {
    * Notify subscribers with new topic content
    *
    * @param {string} topic Topic name
-   * @param {*} content Topic content
+   * @param {{text: string, publisher: string}} content Topic content
    * @memberof EventManager
    */
-  notify(topic: string, content: any) {
+  notify(topic: string, content: {text: string, publisher: string}) {
     const topicData = this.getTopicData(topic);
     topicData.subscribers.forEach((subscriber) => subscriber.notify(topic, content));
     topicData.contentList.push(content);

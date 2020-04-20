@@ -24,17 +24,18 @@ interface ISubscriber {
    * Notify this subscriber with new topic content
    *
    * @param {string} topic Topic name
-   * @param {*} content Topic content
+   * @param {{text: string, publisher: string}} content Topic content
    * @memberof ISubscriber
    */
-  notify(topic: string, content: any): void;
+  notify(topic: string, content: {text: string, publisher: string}): void;
 
   /**
    * Get list of topics this subscriber is interested to
    *
+   * @returns {{topic: string, publishers: string[]}[]}
    * @memberof ISubscriber
    */
-  getSubscriberTopics(): void;
+  getSubscriberTopics(): {topic: string, publishers: string[]}[];
 }
 
 export default ISubscriber;

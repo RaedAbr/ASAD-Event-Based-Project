@@ -26,7 +26,10 @@
                 <h5 class="mb-1">{{ topic.topic }}</h5>
                 <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic.topic)">remove</button>
               </div>
-              <small><em><strong>Publishers:</strong></em> - <span v-for="pub in topic.publishers">{{ pub }} - </span></small>
+              <small
+                ><em><strong>Publishers:</strong></em> -
+                <span v-for="pub in topic.publishers">{{ pub }} - </span></small
+              >
             </li>
           </ul>
         </div>
@@ -35,7 +38,12 @@
           <small>Click to subscribe</small>
           <ul class="list-group">
             <li class="list-group-item">
-              <button v-for="topic in remainTopics" @click="addTopic(topic)" type="button" class="btn btn-primary badge badge-primary badge-pill">
+              <button
+                v-for="topic in remainTopics"
+                @click="addTopic(topic)"
+                type="button"
+                class="btn btn-primary badge badge-primary badge-pill"
+              >
                 {{ topic }}
               </button>
             </li>
@@ -49,7 +57,9 @@
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
-                <small>By <em><strong>{{ article.content.publisher }}</strong></em></small>
+                <small
+                  >By <em><strong>{{ article.content.publisher }}</strong></em></small
+                >
                 <p class="card-text">{{ article.content.text }}</p>
               </div>
             </div>
@@ -99,32 +109,32 @@
                 if (!this.allTopics.includes(topic)) {
                   this.allTopics.push(topic);
                 }
-                if (this.topics.find(t => t.topic == topic)) {
-                  this.topics.find(t => t.topic == topic).publishers.push(publisher);
+                if (this.topics.find((t) => t.topic == topic)) {
+                  this.topics.find((t) => t.topic == topic).publishers.push(publisher);
                 }
               });
               this.socket.on("topicUnregistered", (topic, publisher) => {
-                if (this.topics.find(t => t.topic == topic)) {
-                  const publishers = this.topics.find(t => t.topic == topic).publishers;
-                  this.topics.find(t => t.topic == topic).publishers = publishers.filter(p => p != publisher);
+                if (this.topics.find((t) => t.topic == topic)) {
+                  const publishers = this.topics.find((t) => t.topic == topic).publishers;
+                  this.topics.find((t) => t.topic == topic).publishers = publishers.filter((p) => p != publisher);
                 }
               });
             });
           });
         },
         computed: {
-          remainTopics: function() {
-            return this.allTopics.filter(topic => !this.topics.find(t => t.topic === topic));
-          }
+          remainTopics: function () {
+            return this.allTopics.filter((topic) => !this.topics.find((t) => t.topic === topic));
+          },
         },
         methods: {
           addTopic(topic) {
-              if (this.socket !== null) {
-                this.socket.emit("subscribe", topic, (resp) => {
-                  this.topics.push(resp.topic);
-                  this.articles.push(...resp.articles);
-                });
-              }
+            if (this.socket !== null) {
+              this.socket.emit("subscribe", topic, (resp) => {
+                this.topics.push(resp.topic);
+                this.articles.push(...resp.articles);
+              });
+            }
           },
           removeTopic(topic) {
             this.topics = this.topics.filter((t) => t.topic != topic);

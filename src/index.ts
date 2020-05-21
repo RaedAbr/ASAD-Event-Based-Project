@@ -6,7 +6,6 @@ import Subscriber from "./model/Subscriber";
 import Publisher from "./model/Publisher";
 import IPublisher from "./model/IPublisher";
 import ISubscriber from "./model/ISubscriber";
-import ITopicData from "./model/ITopicData";
 
 const app = express();
 const server = http.createServer(app);
@@ -83,16 +82,21 @@ io.on("connection", (socket) => {
       };
       // send back to subscriber the list of topics to which he
       // subscribes with their contents
-      const topics: {topic: string, publishers: string[]}[] = subscriber.getSubscriberTopics();
-      const articles = topics.flatMap((topic) => pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content })));
+      const topics: { topic: string; publishers: string[] }[] = subscriber.getSubscriberTopics();
+      const articles = topics.flatMap((topic) =>
+        pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content }))
+      );
       const allTopics = pubsub.getAllTopicList();
       ack({ topics: topics, articles: articles, allTopics: allTopics });
 
       socket.on("subscribe", (topic, ack) => {
         log(`subscribed to ${topic}`);
         subscriber.subscribe(topic);
-        const topicObject: {topic: string, publishers: string[]} = subscriber.getSubscriberTopics().find(t => t.topic === topic)!!;
-        ack({topic: topicObject, articles: pubsub.getContentList(topic).map((content) => ({ topic, content }))}); // Send back all messages for topic
+        const topicObject: { topic: string; publishers: string[] } = subscriber
+          .getSubscriberTopics()
+          .find((t) => t.topic === topic)!!;
+        // Send back all messages for topic
+        ack({ topic: topicObject, articles: pubsub.getContentList(topic).map((content) => ({ topic, content })) });
       });
 
       socket.on("unsubscribe", (topic) => {

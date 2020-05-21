@@ -13,7 +13,9 @@
 
   <body>
     <div class="container pt-5" id="app">
-      <h1>Welcome publisher <em><ins>{{ username }}</ins></em></h1>
+      <h1>
+        Welcome publisher <em><ins>{{ username }}</ins></em>
+      </h1>
       <hr />
       <div class="row">
         <div class="col">
@@ -24,16 +26,16 @@
               v-for="topic in topics"
               :class="{ active: selectedTopic === topic }"
             >
-            <div class="container">
-              <div class="row">
-                <div class="col" @click="selectedTopic = topic">
-                  {{ topic }}
-                </div>
-                <div class="col-3">
-                  <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">remove</button>
+              <div class="container">
+                <div class="row">
+                  <div class="col" @click="selectedTopic = topic">
+                    {{ topic }}
+                  </div>
+                  <div class="col-3">
+                    <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">remove</button>
+                  </div>
                 </div>
               </div>
-            </div>
             </li>
           </ul>
         </div>
@@ -54,7 +56,12 @@
           <small>Click to subscribe</small>
           <ul class="list-group">
             <li class="list-group-item">
-              <button v-for="topic in remainTopics" @click="addTopic(topic)" type="button" class="btn btn-primary badge badge-primary badge-pill">
+              <button
+                v-for="topic in remainTopics"
+                @click="addTopic(topic)"
+                type="button"
+                class="btn btn-primary badge badge-primary badge-pill"
+              >
                 {{ topic }}
               </button>
             </li>
@@ -99,7 +106,7 @@
           this.username = this.$route.query.username;
           console.log(`username: ${this.username}`);
           return new Promise((resolve) => {
-            this.socket = io("localhost:3000", {query: {username: this.username}}); // connect
+            this.socket = io("localhost:3000", { query: { username: this.username } }); // connect
             console.log("connecting...");
             this.socket.on("connect", () => {
               console.log("connected...");
@@ -119,9 +126,9 @@
           });
         },
         computed: {
-          remainTopics: function() {
-            return this.allTopics.filter(topic => !this.topics.includes(topic));
-          }
+          remainTopics: function () {
+            return this.allTopics.filter((topic) => !this.topics.includes(topic));
+          },
         },
         methods: {
           addTopic(newTopic) {
@@ -136,7 +143,7 @@
             this.newTopic = "";
           },
           removeTopic(topic) {
-            this.topics = this.topics.filter(t => t != topic);
+            this.topics = this.topics.filter((t) => t != topic);
             this.selectedTopic = null;
 
             if (this.socket !== null) {

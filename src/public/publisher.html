@@ -13,9 +13,14 @@
 
   <body>
     <div class="container pt-5" id="app">
-      <h1>
-        Welcome publisher <em><ins>{{ username }}</ins></em>
-      </h1>
+      <div class="row">
+        <h1 class="col-auto mr-auto">
+          Welcome publisher <em><ins>{{ username }}</ins></em>
+        </h1>
+        <div class="col-auto">
+          <button type="button" class="btn btn-danger" @click="logout">Logout</button>
+        </div>
+      </div>
       <hr />
       <div class="row">
         <div class="col">
@@ -79,17 +84,26 @@
         </div>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <!-- <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script type="text/javascript">
-      var router = new VueRouter({
-        mode: "history",
-        routes: [],
-      });
+      // var router = new VueRouter({
+      //   mode: "history",
+      //   routes: [],
+      // });
+
+      const parseCookie = str =>
+      str.split(';')
+        .map(v => v.split('='))
+        .reduce((acc, v) => {
+          acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+          return acc;
+        }, {});
 
       new Vue({
-        router,
+        // router,
         el: "#app",
         data() {
           return {
@@ -103,23 +117,34 @@
         },
         socket: null,
         async mounted() {
-          this.username = this.$route.query.username;
-          console.log(`username: ${this.username}`);
+          const accessToken = parseCookie(document.cookie).accessToken;
+          // this.username = this.$route.query.username;
+          console.log(`accessToken: ${accessToken}`);
           return new Promise((resolve) => {
-            this.socket = io("localhost:3000", { query: { username: this.username } }); // connect
+            this.socket = io("localhost:3000", { query: { accessToken: accessToken } }); // connect
             console.log("connecting...");
             this.socket.on("connect", () => {
               console.log("connected...");
               this.socket.emit("publisher", null, (data) => {
-                console.log("registered as publisher!");
                 console.log(data);
+                console.log("registered as publisher!");
+                this.username = data.username;
                 this.topics = data.topics;
                 this.allTopics = data.allTopics;
                 resolve();
               });
-              this.socket.on("addedTopic", (topic) => {
+              this.socket.on("topicRegistered", (topic, publisher) => {
                 if (!this.allTopics.includes(topic)) {
                   this.allTopics.push(topic);
+                }
+                if (this.topics.find((t) => t.topic == topic)) {
+                  this.topics.find((t) => t.topic == topic).publishers.push(publisher);
+                }
+              });
+              this.socket.on("topicUnregistered", (topic, publisher) => {
+                if (this.topics.find((t) => t.topic == topic)) {
+                  const publishers = this.topics.find((t) => t.topic == topic).publishers;
+                  this.topics.find((t) => t.topic == topic).publishers = publishers.filter((p) => p != publisher);
                 }
               });
             });
@@ -157,6 +182,18 @@
               this.socket.emit("publish", this.selectedTopic, content);
             }
             this.content = "";
+          },
+          async logout() {
+            await axios({
+              method: "delete",
+              url: `/user/logout`
+            })
+              .then((resp) => {
+                window.location.href = "/";
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           },
         },
       });

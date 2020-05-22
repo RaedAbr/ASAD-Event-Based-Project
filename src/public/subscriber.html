@@ -13,9 +13,14 @@
 
   <body>
     <div class="container pt-5" id="app">
-      <h1>
-        Welcome subscriber <em><ins>{{ username }}</ins></em>
-      </h1>
+      <div class="row">
+        <h1 class="col-auto mr-auto">
+          Welcome subscriber <em><ins>{{ username }}</ins></em>
+        </h1>
+        <div class="col-auto">
+          <button type="button" class="btn btn-danger" @click="logout">Logout</button>
+        </div>
+      </div>
       <hr />
       <div class="row">
         <div class="col">
@@ -67,17 +72,25 @@
         </div>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <!-- <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script> -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
     <script type="text/javascript">
-      var router = new VueRouter({
-        mode: "history",
-        routes: [],
-      });
+      // var router = new VueRouter({
+      //   mode: "history",
+      //   routes: [],
+      // });
+
+      const parseCookie = str =>
+      str.split(';')
+        .map(v => v.split('='))
+        .reduce((acc, v) => {
+          acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+          return acc;
+        }, {});
 
       const vue = new Vue({
-        router,
         el: "#app",
         data() {
           return {
@@ -89,15 +102,17 @@
         },
         socket: null,
         mounted() {
-          this.username = this.$route.query.username;
-          console.log(`username: ${this.username}`);
-          this.socket = io("localhost:3000", { query: { username: this.username } }); // connect
+          const accessToken = parseCookie(document.cookie).accessToken;
+          // this.username = this.$route.query.username;
+          console.log(`accessToken: ${accessToken}`);
+          this.socket = io("localhost:3000", { query: { accessToken: accessToken } }); // connect
           console.log("connecting...");
           this.socket.on("connect", () => {
             console.log("connected...");
             this.socket.emit("subscriber", null, (data) => {
+              console.log(data);
               console.log("registered as subscriber!");
-              console.log(data.articles);
+              this.username = data.username;
               this.articles = data.articles;
               this.topics = data.topics;
               this.allTopics = data.allTopics;
@@ -143,6 +158,18 @@
             if (this.socket !== null) {
               this.socket.emit("unsubscribe", topic);
             }
+          },
+          async logout() {
+            await axios({
+              method: "delete",
+              url: `/user/logout`
+            })
+              .then((resp) => {
+                window.location.href = "/";
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           },
         },
       });

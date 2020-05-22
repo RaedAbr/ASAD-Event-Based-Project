@@ -1,6 +1,6 @@
 import EventManager from "../EventManager";
 import ISubscriber from "./ISubscriber";
-import ITopicData from "./ITopicData";
+import User from "./User";
 
 /**
  * Subscriber logic
@@ -8,7 +8,7 @@ import ITopicData from "./ITopicData";
  * @class Subscriber
  * @implements {ISubscriber}
  */
-class Subscriber implements ISubscriber {
+class Subscriber extends User implements ISubscriber {
   /**
    * Creates an instance of Subscriber.
    * @param {EventManager} pubsub Manage events related to topics, subscribers and publishers
@@ -16,9 +16,13 @@ class Subscriber implements ISubscriber {
    * @memberof Subscriber
    */
   constructor(
+    public username: string,
+    public password: string,
     private pubsub: EventManager,
     private _onMessage: (topic: string, content: { text: string; publisher: string }) => void
-  ) {}
+  ) {
+    super(username, password, "subscriber");
+  }
 
   set onMessage(onMessage: (topic: string, content: { text: string; publisher: string }) => void) {
     this._onMessage = onMessage;

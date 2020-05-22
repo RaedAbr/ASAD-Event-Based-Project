@@ -27,7 +27,7 @@ interface ISubscriber {
    * @param {{text: string, publisher: string}} content Topic content
    * @memberof ISubscriber
    */
-  notify(topic: string, content: {text: string, publisher: string}): void;
+  notify(topic: string, content: { text: string; publisher: string }): void;
 
   /**
    * Get list of topics this subscriber is interested to
@@ -35,7 +35,7 @@ interface ISubscriber {
    * @returns {{topic: string, publishers: string[]}[]}
    * @memberof ISubscriber
    */
-  getSubscriberTopics(): {topic: string, publishers: string[]}[];
+  getSubscriberTopics(): { topic: string; publishers: string[] }[];
 }
 
 export default ISubscriber;

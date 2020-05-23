@@ -38,7 +38,7 @@ class EventManager {
   getContentList(topic: string): {text: string, publisher: string}[] {
     return this.getTopicData(topic).contentList;
   }
-  
+
   /**
    * Get topics list of given publisher
    *
@@ -92,7 +92,7 @@ class EventManager {
    * @memberof EventManager
    */
   unsubscribe(topic: string, subscriber: Subscriber) {
-    this.getTopicData(topic).subscribers.delete(subscriber);
+    this.getMatchingTopics(topic).forEach((t) => t.subscribers.delete(subscriber));
   }
 
   /**
@@ -127,9 +127,7 @@ class EventManager {
    * @memberof EventManager
    */
   notify(topic: string, content: {text: string, publisher: string}) {
-    const topicData = this.getTopicData(topic);
-    topicData.subscribers.forEach((subscriber) => subscriber.notify(topic, content));
-    topicData.contentList.push(content);
+    this.getMatchingTopics(topic).forEach((topicData) => topicData.subscribers.forEach((s) => s.notify(topic, content)));
   }
 
   /**
@@ -145,6 +143,14 @@ class EventManager {
       this.registerTopic(topic);
     }
     return this.topics.get(topic) as ITopicData;
+  }
+
+  private getMatchingTopics(topic: string): ITopicData[] {
+    const matching: ITopicData[] = [];
+    this.topics.forEach((data, name) => {
+      if (name.startsWith(topic)) matching.push(data);
+    });
+    return matching;
   }
 
   /**

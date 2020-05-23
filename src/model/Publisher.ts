@@ -1,5 +1,5 @@
-import EventManager from "../EventManager";
 import IPublisher from "./IPublisher";
+import EventManager from "../EventManager";
 
 /**
  * Publisher logic
@@ -10,7 +10,7 @@ import IPublisher from "./IPublisher";
 class Publisher implements IPublisher {
   /**
    * Creates an instance of Publisher.
-   * 
+   *
    * @param {string} username Publisher name
    * @param {EventManager} pubsub Manage events related to topics, subscribers and publishers
    * @memberof Publisher

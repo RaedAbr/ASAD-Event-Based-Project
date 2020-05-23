@@ -6,7 +6,6 @@ import Subscriber from "./model/Subscriber";
 import Publisher from "./model/Publisher";
 import IPublisher from "./model/IPublisher";
 import ISubscriber from "./model/ISubscriber";
-import ITopicData from "./model/ITopicData";
 
 const app = express();
 const server = http.createServer(app);

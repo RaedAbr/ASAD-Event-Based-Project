@@ -157,7 +157,7 @@ class EventManager {
   private getMatchingTopics(topic: string): ITopicData[] {
     const matching: ITopicData[] = [];
     this.topics.forEach((data, name) => {
-      if (name.startsWith(topic)) matching.push(data);
+      if (topic.startsWith(name)) matching.push(data);
     });
     return matching;
   }

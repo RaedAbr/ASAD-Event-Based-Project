@@ -118,20 +118,21 @@
               this.allTopics = data.allTopics;
               this.socket.on("update", (article) => {
                 console.log(article); // Received new articles for given topic
-                this.articles.push(article);
+                if (this.articles.findIndex(ca => ca.id === article.id) < 0)
+                  this.articles.push(article);
               });
               this.socket.on("topicRegistered", (topic, publisher) => {
                 if (!this.allTopics.includes(topic)) {
                   this.allTopics.push(topic);
                 }
-                if (this.topics.find((t) => t.topic == topic)) {
-                  this.topics.find((t) => t.topic == topic).publishers.push(publisher);
+                if (this.topics.find((t) => t.topic === topic)) {
+                  this.topics.find((t) => t.topic === topic).publishers.push(publisher);
                 }
               });
               this.socket.on("topicUnregistered", (topic, publisher) => {
-                if (this.topics.find((t) => t.topic == topic)) {
-                  const publishers = this.topics.find((t) => t.topic == topic).publishers;
-                  this.topics.find((t) => t.topic == topic).publishers = publishers.filter((p) => p != publisher);
+                if (this.topics.find((t) => t.topic === topic)) {
+                  const publishers = this.topics.find((t) => t.topic === topic).publishers;
+                  this.topics.find((t) => t.topic === topic).publishers = publishers.filter((p) => p !== publisher);
                 }
               });
             });
@@ -152,8 +153,8 @@
             }
           },
           removeTopic(topic) {
-            this.topics = this.topics.filter((t) => t.topic != topic);
-            this.articles = this.articles.filter((a) => a.topic != topic);
+            this.topics = this.topics.filter((t) => t.topic !== topic);
+            this.articles = this.articles.filter((a) => a.topic !== topic);
 
             if (this.socket !== null) {
               this.socket.emit("unsubscribe", topic);

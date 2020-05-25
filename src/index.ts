@@ -2,6 +2,8 @@ import { ACCESS_TOKEN_SECRET } from './config';
 import bcrypt from 'bcrypt';
 import express, { Request, Response, NextFunction } from "express";
 import http from "http";
+import https from "https";
+import fs from "fs";
 import socketio from "socket.io";
 import jwt from "jsonwebtoken";
 import bodyParser from "body-parser";
@@ -17,7 +19,10 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(httpLogger);
-const server = http.createServer(app);
+const server = https.createServer({
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.cert')
+}, app);
 const io = socketio(server);
 
 const logSocket = (id: string, message: any) => logger.info(`[${id}] ${message}`);

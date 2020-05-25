@@ -2557,3 +2557,72 @@
 2020-05-23 00:32:18:3218 info: [qPRrIRoU_jYjvkBlAAAC] user "ff" disconnected
 2020-05-23 00:32:19:3219 info: [Sf2SWmZECAMjMHnEAAAB] user "rr" disconnected
 2020-05-23 00:32:21:3221 info: [qFwkyVf6KdWvF9n8AAAA] user "raed" disconnected
+2020-05-26 00:45:26:4526 info: Listening on 3000
+2020-05-26 00:46:00:460 info: GET / 200 4.162 ms - 7290
+2020-05-26 00:46:00:460 info: GET /favicon.ico 404 0.972 ms - 150
+2020-05-26 00:46:11:4611 info: [REGISTER] user a as publisher
+2020-05-26 00:46:11:4611 info: [object Map]
+2020-05-26 00:46:11:4611 info: POST /user/register 201 62.398 ms - -
+2020-05-26 00:46:11:4611 info: POST / 200 0.889 ms - 7290
+2020-05-26 00:46:16:4616 info: [LOGIN] user a as Publisher
+2020-05-26 00:46:16:4616 info: POST /user/login 200 66.459 ms - 24
+2020-05-26 00:46:16:4616 info: POST /Publisher 200 1.494 ms - 7022
+2020-05-26 00:46:16:4616 info: accessToken from socker handshake: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImEiLCJwYXNzd29yZCI6IiQyYiQxMCRNNnIvZlpHYlMub3FKcTlRR0VoZml1ZWozVHhiM2lXRXEwZmYwaHY4d20zRklhSkZRTGpjdSIsInJvbGUiOiJwdWJsaXNoZXIiLCJwdWJzdWIiOnsidG9waWNzIjp7fX0sImlhdCI6MTU5MDQ0Njc3Nn0.U_fUP_fPMrtj0S8ErtPKGLEa0aQX_RcEgAPb5SQanUA
+2020-05-26 00:46:16:4616 info: [F_kXjd2sI1JPxdQRAAAA] received connection, waiting for identification...
+2020-05-26 00:46:16:4616 info: [F_kXjd2sI1JPxdQRAAAA] user "a" connected as a publisher!
+2020-05-26 00:46:34:4634 info: DELETE /user/logout 204 0.447 ms - -
+2020-05-26 00:46:34:4634 info: GET / 200 0.499 ms - 7290
+2020-05-26 00:46:34:4634 info: [F_kXjd2sI1JPxdQRAAAA] user "a" disconnected
+2020-05-26 00:46:40:4640 info: [REGISTER] user b as subscriber
+2020-05-26 00:46:40:4640 info: [object Map]
+2020-05-26 00:46:40:4640 info: POST /user/register 201 62.581 ms - -
+2020-05-26 00:46:40:4640 info: POST / 200 1.286 ms - 7290
+2020-05-26 00:46:44:4644 error: [LOGIN] user b bad password
+2020-05-26 00:46:44:4644 info: POST /user/login 400 64.642 ms - 28
+2020-05-26 00:46:47:4647 info: [LOGIN] user b as Subscriber
+2020-05-26 00:46:47:4647 info: POST /user/login 200 64.989 ms - 25
+2020-05-26 00:46:47:4647 info: POST /Subscriber 200 0.705 ms - 6378
+2020-05-26 00:46:48:4648 info: accessToken from socker handshake: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImIiLCJwYXNzd29yZCI6IiQyYiQxMCRQa3lYYU1hM0FycTl6UkkzVGRZeVFPLk9nUnhQaTNNcXlrZ2l2Um83bllxZVc5WjRJaC9ycSIsInJvbGUiOiJzdWJzY3JpYmVyIiwicHVic3ViIjp7InRvcGljcyI6e319LCJpYXQiOjE1OTA0NDY4MDd9.3p7xbtwrw_0vwdZQdHzmnR-pkFWJ5kN3ceTBxyy5YCI
+2020-05-26 00:46:48:4648 info: [3zB_EuT4N11DfWelAAAB] received connection, waiting for identification...
+2020-05-26 00:46:48:4648 info: [3zB_EuT4N11DfWelAAAB] b registered as a subscriber!
+2020-05-26 00:46:56:4656 info: [3zB_EuT4N11DfWelAAAB] subscribed to a
+2020-05-26 00:48:43:4843 info: GET / 302 5.129 ms - 66
+2020-05-26 00:48:43:4843 info: GET /subscriber 200 0.697 ms - 6378
+2020-05-26 00:48:43:4843 info: [3zB_EuT4N11DfWelAAAB] user "b" disconnected
+2020-05-26 00:48:43:4843 info: accessToken from socker handshake: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImIiLCJwYXNzd29yZCI6IiQyYiQxMCRQa3lYYU1hM0FycTl6UkkzVGRZeVFPLk9nUnhQaTNNcXlrZ2l2Um83bllxZVc5WjRJaC9ycSIsInJvbGUiOiJzdWJzY3JpYmVyIiwicHVic3ViIjp7InRvcGljcyI6e319LCJpYXQiOjE1OTA0NDY4MDd9.3p7xbtwrw_0vwdZQdHzmnR-pkFWJ5kN3ceTBxyy5YCI
+2020-05-26 00:48:43:4843 info: [LQt7sfJHX3FRzAgjAAAC] received connection, waiting for identification...
+2020-05-26 00:48:43:4843 info: [LQt7sfJHX3FRzAgjAAAC] b registered as a subscriber!
+2020-05-26 00:48:47:4847 info: DELETE /user/logout 204 0.250 ms - -
+2020-05-26 00:48:47:4847 info: GET / 200 0.419 ms - 7290
+2020-05-26 00:48:47:4847 info: [LQt7sfJHX3FRzAgjAAAC] user "b" disconnected
+2020-05-26 00:48:49:4849 info: GET / 200 0.438 ms - 7290
+2020-05-26 00:48:54:4854 info: GET / 200 0.404 ms - 7290
+2020-05-26 00:49:19:4919 info: GET / 200 0.392 ms - 7290
+2020-05-26 00:59:37:5937 info: Listening on 3000
+2020-05-26 00:59:58:5958 info: GET / 200 4.360 ms - 7290
+2020-05-26 01:00:02:02 error: [LOGIN] user a is not registered
+2020-05-26 01:00:02:02 info: POST /user/login 400 1.703 ms - 28
+2020-05-26 01:00:08:08 info: [REGISTER] user a as publisher
+2020-05-26 01:00:08:08 info: [object Map]
+2020-05-26 01:00:08:08 info: POST /user/register 201 63.600 ms - -
+2020-05-26 01:00:08:08 info: POST / 200 0.931 ms - 7290
+2020-05-26 01:00:12:012 info: [LOGIN] user a as Publisher
+2020-05-26 01:00:12:012 info: POST /user/login 200 65.991 ms - 24
+2020-05-26 01:00:12:012 info: POST /Publisher 200 1.538 ms - 7022
+2020-05-26 01:00:12:012 info: accessToken from socker handshake: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImEiLCJwYXNzd29yZCI6IiQyYiQxMCR1ZURoNkM1MXlCM3paWXhMbjlSNkdPbG5uZjNCL3NDZVc4a04vT3BBN1hCVzZYWkk1YnFtUyIsInJvbGUiOiJwdWJsaXNoZXIiLCJwdWJzdWIiOnsidG9waWNzIjp7fX0sImlhdCI6MTU5MDQ0NzYxMn0.5Tvlw3DneKBobMcEO-dktL6mEVuXttEMXCxWCfxa7W8
+2020-05-26 01:00:13:013 info: [zYUiDg5bDijMBKLRAAAA] received connection, waiting for identification...
+2020-05-26 01:00:13:013 info: [zYUiDg5bDijMBKLRAAAA] user "a" connected as a publisher!
+2020-05-26 01:00:22:022 info: DELETE /user/logout 204 0.444 ms - -
+2020-05-26 01:00:22:022 info: GET / 200 0.488 ms - 7290
+2020-05-26 01:00:22:022 info: [zYUiDg5bDijMBKLRAAAA] user "a" disconnected
+2020-05-26 01:00:30:030 info: [REGISTER] user b as subscriber
+2020-05-26 01:00:30:030 info: [object Map]
+2020-05-26 01:00:30:030 info: POST /user/register 201 64.269 ms - -
+2020-05-26 01:00:30:030 info: POST / 200 0.834 ms - 7290
+2020-05-26 01:00:33:033 info: [LOGIN] user b as Subscriber
+2020-05-26 01:00:33:033 info: POST /user/login 200 64.202 ms - 25
+2020-05-26 01:00:33:033 info: POST /Subscriber 200 0.724 ms - 6378
+2020-05-26 01:00:33:033 info: accessToken from socker handshake: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImIiLCJwYXNzd29yZCI6IiQyYiQxMCRoRC5rRVpuVk1zY2pwWUN6RkovVXBlTG1TS0ROZjFVOHV1QTd1WEtBZE1vWHUwN003Y3BPQyIsInJvbGUiOiJzdWJzY3JpYmVyIiwicHVic3ViIjp7InRvcGljcyI6e319LCJpYXQiOjE1OTA0NDc2MzN9.gfIcrvBetl7UHMFgdXwz5dSoMEb-H9LyuDlEydRlTmU
+2020-05-26 01:00:33:033 info: [Buw3J8xcyVPTlbucAAAB] received connection, waiting for identification...
+2020-05-26 01:00:33:033 info: [Buw3J8xcyVPTlbucAAAB] b registered as a subscriber!
+2020-05-26 01:00:35:035 info: [Buw3J8xcyVPTlbucAAAB] subscribed to a

@@ -1,7 +1,6 @@
 import { ACCESS_TOKEN_SECRET } from './config';
 import bcrypt from 'bcrypt';
 import express, { Request, Response, NextFunction } from "express";
-import http from "http";
 import https from "https";
 import fs from "fs";
 import socketio from "socket.io";

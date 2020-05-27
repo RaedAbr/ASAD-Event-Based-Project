@@ -178,16 +178,17 @@ io.on("connection", (socket) => {
       };
       // send back to subscriber the list of topics to which he
       // subscribes with their contents
-      const topics: { topic: string; publishers: string[] }[] = subscriber.getSubscriberTopics();
-      const articles = topics.flatMap((topic) =>
-        pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content }))
-      );
-      const allTopics = pubsub.getAllTopicList();
       if (userTopics.has(subscriber) === false) {
         userTopics.set(subscriber, []);
       }
       const rateTopics = userTopics.get(subscriber);
-      ack({ username: username, topics: topics, articles: articles, allTopics: allTopics, rateTopics: rateTopics});
+      const topics: { topic: string; publishers: string[] }[] = subscriber.getSubscriberTopics();
+      const articles = topics.flatMap((topic) =>
+        pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content }))
+      );
+      const orderedArticles = subscriber.sortArticles(articles, rateTopics);
+      const allTopics = pubsub.getAllTopicList();
+      ack({ username: username, topics: topics, articles: orderedArticles, allTopics: allTopics, rateTopics: rateTopics});
 
       socket.on("subscribe", (topic, ack) => {
         log(`subscribed to ${topic}`);
@@ -196,7 +197,8 @@ io.on("connection", (socket) => {
           .getSubscriberTopics()
           .find((t) => t.topic === topic)!!;
         // Send back all messages for topic
-        ack({ topic: topicObject, articles: pubsub.getContentList(topic).map((content) => ({ topic, content })) });
+        let e = subscriber.sortArticles(pubsub.getContentList(topic).map((content) => ({ topic, content })), rateTopics);
+        ack({ topic: topicObject, articles: e });
       });
 
       socket.on("getRating", (ack) => {

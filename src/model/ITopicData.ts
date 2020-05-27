@@ -27,7 +27,7 @@ interface ITopicData {
    * @type {{text: string, publisher: string}[]}
    * @memberof topicData
    */
-  contentList: { text: string; publisher: string, id: string }[];
+  contentList: { text: string; publisher: string, id: string, rate: number }[];
 }
 
 export default ITopicData;

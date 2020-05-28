@@ -93,7 +93,7 @@ class EventManager {
    * @memberof EventManager
    */
   unsubscribe(topic: string, subscriber: Subscriber) {
-    this.getTopicData(topic).subscribers.delete(subscriber);
+    this.getMatchingTopics(topic).forEach((t) => t.subscribers.delete(subscriber));
   }
 
   /**
@@ -127,11 +127,8 @@ class EventManager {
    * @param {{text: string, publisher: string}} content Topic content
    * @memberof EventManager
    */
-  notify(topic: string, content: { text: string; publisher: string }) {
-    this.getMatchingTopics(topic).forEach((topicData) => {
-      topicData.subscribers.forEach((subscriber) => subscriber.notify(topic, content));
-      topicData.contentList.push({ ...content, id: uniqid(), rate: 3.0 });
-    });
+  notify(topic: string, content: {text: string, publisher: string}) {
+    this.getMatchingTopics(topic).forEach((topicData) => topicData.subscribers.forEach((s) => s.notify(topic, content)));
   }
 
   /**

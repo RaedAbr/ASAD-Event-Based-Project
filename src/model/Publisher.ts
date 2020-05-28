@@ -1,6 +1,6 @@
-import EventManager from "../EventManager";
 import IPublisher from "./IPublisher";
 import User from "./User";
+import EventManager from "../EventManager";
 
 /**
  * Publisher logic

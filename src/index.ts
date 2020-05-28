@@ -12,6 +12,7 @@ import Subscriber from "./model/Subscriber";
 import Publisher from "./model/Publisher";
 import User from "./model/User";
 import { logger, httpLogger } from "./Logger";
+import UserTopic from "./model/UserTopic";
 
 const app = express();
 app.use(express.json());
@@ -28,7 +29,7 @@ const logSocket = (id: string, message: any) => logger.info(`[${id}] ${message}`
 
 const users = new Map<string, User>();
 const pubsub = new EventManager();
-
+const userTopics = new Map<User, Array<UserTopic>>();
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // auth routes
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -177,12 +178,17 @@ io.on("connection", (socket) => {
       };
       // send back to subscriber the list of topics to which he
       // subscribes with their contents
+      if (userTopics.has(subscriber) === false) {
+        userTopics.set(subscriber, []);
+      }
+      const rateTopics = userTopics.get(subscriber);
       const topics: { topic: string; publishers: string[] }[] = subscriber.getSubscriberTopics();
       const articles = topics.flatMap((topic) =>
         pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content }))
       );
+      const orderedArticles = subscriber.sortArticles(articles, rateTopics);
       const allTopics = pubsub.getAllTopicList();
-      ack({ username: username, topics: topics, articles: articles, allTopics: allTopics });
+      ack({ username: username, topics: topics, articles: orderedArticles, allTopics: allTopics, rateTopics: rateTopics});
 
       socket.on("subscribe", (topic, ack) => {
         log(`subscribed to ${topic}`);
@@ -191,8 +197,25 @@ io.on("connection", (socket) => {
           .getSubscriberTopics()
           .find((t) => t.topic === topic)!!;
         // Send back all messages for topic
-        ack({ topic: topicObject, articles: pubsub.getContentList(topic).map((content) => ({ topic, content })) });
+        let e = subscriber.sortArticles(pubsub.getContentList(topic).map((content) => ({ topic, content })), rateTopics);
+        ack({ topic: topicObject, articles: e });
       });
+
+      socket.on("getRating", (ack) => {
+        ack({rateTopics: userTopics.get(subscriber)});
+      });
+
+      socket.on("updateRating", (topic, rate) => {
+        let index = rateTopics.findIndex(element => element.topic === topic);
+        if (index != -1) {
+          rateTopics.splice(index, 1);
+          rateTopics.push(new UserTopic(topic, rate))
+        }
+        else {
+          rateTopics.push(new UserTopic(topic, rate))
+        }
+        userTopics.set(subscriber, rateTopics);
+      })
 
       socket.on("unsubscribe", (topic) => {
         log(`unsubscribed from ${topic}`);

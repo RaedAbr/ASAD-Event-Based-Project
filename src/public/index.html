@@ -42,10 +42,14 @@
         <div v-if="errors.length" class="alert alert-danger" role="alert">
           <span v-for="error in errors">{{ error }}</span>
         </div>
-        <form method="get" @submit="login">
+        <form method="post" @submit="login">
           <div class="form-group">
             <input type="text" name="username" id="username" class="form-control" placeholder="Username" v-model="username" autocomplete="off" required autofocus>
           </div>
+          <div class="form-group">
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" v-model="password" autocomplete="off" required autofocus>
+          </div>
+          <!-- <input type="hidden" v-model="accessToken" name="accessToken" id="accessToken"> -->
           <div class="form-group">
             <button class="btn btn-primary" type="submit" :disabled="username === ''">Login</button>
           </div>
@@ -64,16 +68,19 @@
         <div v-if="errors.length" class="alert alert-danger" role="alert">
           <span v-for="error in errors">{{ error }}</span>
         </div>
-        <form v-bind:action="userType" method="get" @submit="register">
+        <form action="/" method="post" @submit="register">
           <div class="form-group">
             <input type="text" name="username" id="username" class="form-control" placeholder="Username" v-model="username" autocomplete="off" required autofocus>
           </div>
+          <div class="form-group">
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" v-model="password" autocomplete="off" required autofocus>
+          </div>
           <div class="form-group btn-group btn-group-toggle" data-toggle="buttons">
             <label class="btn btn-secondary">
-              <input type="radio" @click="userType = 'publisher'" autocomplete="off" required> As publisher
+              <input type="radio" @click="userType = 'publisher'" autocomplete="off"> As publisher
             </label>
             <label class="btn btn-secondary">
-              <input type="radio" @click="userType = 'subscriber'" autocomplete="off" required> As subscriber
+              <input type="radio" @click="userType = 'subscriber'" autocomplete="off"> As subscriber
             </label>
           </div>
           <div class="form-group">
@@ -92,6 +99,8 @@
           return {
             errors: [],
             username: "",
+            password: "",
+            // accessToken: ""
           };
         },
         methods: {
@@ -101,13 +110,20 @@
 
             await axios({
               method: "post",
-              url: `/login/${this.username}`,
+              url: `/user/login`,
+              data: {
+                username: this.username,
+                password: this.password
+              }
             })
               .then((resp) => {
                 // resp.data will contains "publisher" or "subscriber"
                 // submit the form
-                console.log(this.userType);
-                e.target.action = resp.data;
+                // this.accessToken = resp.data.accessToken;
+                // window.localStorage.setItem("accessToken", this.accessToken);
+                e.target.action = resp.data.userType;
+              })
+              .then(() => {
                 e.target.submit();
               })
               .catch((err) => {
@@ -125,6 +141,7 @@
           return {
             errors: [],
             username: "",
+            password: "",
             userType: "",
           };
         },
@@ -135,7 +152,12 @@
 
             await axios({
               method: "post",
-              url: `/register/${this.userType}/${this.username}`,
+              url: `/user/register`,
+              data: {
+                userType: this.userType,
+                username: this.username,
+                password: this.password
+              }
             })
               .then((resp) => {
                 // submit the form

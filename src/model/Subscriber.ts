@@ -1,6 +1,6 @@
 import EventManager from "../EventManager";
 import ISubscriber from "./ISubscriber";
-import ITopicData from "./ITopicData";
+import User from "./User";
 
 /**
  * Subscriber logic
@@ -8,16 +8,23 @@ import ITopicData from "./ITopicData";
  * @class Subscriber
  * @implements {ISubscriber}
  */
-class Subscriber implements ISubscriber {
+class Subscriber extends User implements ISubscriber {
   /**
    * Creates an instance of Subscriber.
    * @param {EventManager} pubsub Manage events related to topics, subscribers and publishers
    * @param {(topic: string, content: any) => void} _onMessage Action to perform when new topic content is published
    * @memberof Subscriber
    */
-  constructor(private pubsub: EventManager, private _onMessage: (topic: string, content: {text: string, publisher: string}) => void) {}
+  constructor(
+    public username: string,
+    public password: string,
+    private pubsub: EventManager,
+    private _onMessage: (topic: string, content: { text: string; publisher: string }) => void
+  ) {
+    super(username, password, "subscriber");
+  }
 
-  set onMessage(onMessage: (topic: string, content: {text: string, publisher: string}) => void) {
+  set onMessage(onMessage: (topic: string, content: { text: string; publisher: string }) => void) {
     this._onMessage = onMessage;
   }
 
@@ -29,13 +36,26 @@ class Subscriber implements ISubscriber {
     this.pubsub.unsubscribe(topic, this);
   }
 
-  notify(topic: string, content: {text: string, publisher: string}) {
+  notify(topic: string, content: { text: string; publisher: string }) {
     this._onMessage(topic, content);
   }
 
-  getSubscriberTopics(): {topic: string, publishers: string[]}[] {
+  getSubscriberTopics(): { topic: string; publishers: string[] }[] {
     return this.pubsub.getSubscriberTopics(this);
   }
+
+  sortArticles(articles, rate) {
+    articles.forEach(a => {
+      rate.forEach(r => {
+        if (a.topic === r.topic) {
+          a.content = { text: a.content.text, publisher: a.content.publisher, id: a.content.id, rate: r.rate };
+        }
+      })
+    })
+
+    return articles.sort((a1, a2) => a1.content.rate <= a2.content.rate ? 1 : -1);
+  }
+
 }
 
 export default Subscriber;

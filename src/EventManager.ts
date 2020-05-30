@@ -1,3 +1,4 @@
+import uniqid from 'uniqid';
 import Publisher from "./model/Publisher";
 import Subscriber from "./model/Subscriber";
 import ITopicData from "./model/ITopicData";
@@ -35,10 +36,10 @@ class EventManager {
    * @returns Topic content list
    * @memberof EventManager
    */
-  getContentList(topic: string): {text: string, publisher: string}[] {
+  getContentList(topic: string): { text: string; publisher: string }[] {
     return this.getTopicData(topic).contentList;
   }
-  
+
   /**
    * Get topics list of given publisher
    *
@@ -63,11 +64,11 @@ class EventManager {
    * @returns {{topic: string, publishers: string[]}[]} List of topics
    * @memberof EventManager
    */
-  getSubscriberTopics(subscriber: Subscriber): {topic: string, publishers: string[]}[] {
-    const topics: {topic: string, publishers: string[]}[] = [];
+  getSubscriberTopics(subscriber: Subscriber): { topic: string; publishers: string[] }[] {
+    const topics: { topic: string; publishers: string[] }[] = [];
     this.topics.forEach((eventData, topic) => {
       if (eventData.subscribers.has(subscriber)) {
-        topics.push({topic, publishers: Array.from(eventData.publishers.values()).map(p => p.username)});
+        topics.push({ topic, publishers: Array.from(eventData.publishers.values()).map((p) => p.username) });
       }
     });
     return topics;
@@ -92,7 +93,7 @@ class EventManager {
    * @memberof EventManager
    */
   unsubscribe(topic: string, subscriber: Subscriber) {
-    this.getTopicData(topic).subscribers.delete(subscriber);
+    this.getMatchingTopics(topic).forEach((t) => t.subscribers.delete(subscriber));
   }
 
   /**
@@ -127,9 +128,11 @@ class EventManager {
    * @memberof EventManager
    */
   notify(topic: string, content: {text: string, publisher: string}) {
-    const topicData = this.getTopicData(topic);
-    topicData.subscribers.forEach((subscriber) => subscriber.notify(topic, content));
-    topicData.contentList.push(content);
+    this.getMatchingTopics(topic).forEach((topicData) => {
+      let elem = {text: content.text, publisher: content.publisher, id: uniqid(), rate: 3.0}
+      topicData.contentList.push(elem);
+      topicData.subscribers.forEach((s) => s.notify(topic, elem))
+    });
   }
 
   /**
@@ -145,6 +148,19 @@ class EventManager {
       this.registerTopic(topic);
     }
     return this.topics.get(topic) as ITopicData;
+  }
+
+  /**
+   * Returns all topics matching with given topic, which means where
+   * beginning of topic name is equal to given topic
+   * @param topic
+   */
+  private getMatchingTopics(topic: string): ITopicData[] {
+    const matching: ITopicData[] = [];
+    this.topics.forEach((data, name) => {
+      if (topic.startsWith(name)) matching.push(data);
+    });
+    return matching;
   }
 
   /**

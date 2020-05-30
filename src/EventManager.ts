@@ -129,8 +129,8 @@ class EventManager {
    */
   notify(topic: string, content: {text: string, publisher: string}) {
     this.getMatchingTopics(topic).forEach((topicData) => {
-      topicData.subscribers.forEach((s) => s.notify(topic, content))
       topicData.contentList.push({ ...content, id: uniqid(), rate: 3.0 });
+      topicData.subscribers.forEach((s) => s.notify(topic, content))
     });
   }
 

@@ -53,7 +53,7 @@ class Subscriber extends User implements ISubscriber {
       })
     })
 
-    return articles;
+    return articles.sort((a1, a2) => a1.content.rate <= a2.content.rate ? 1 : -1);
   }
 
 }

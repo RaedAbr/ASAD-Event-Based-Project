@@ -65,7 +65,7 @@
       <hr />
       <div>
         <div class="row">
-          <div class="col-3" v-for="article in orderedArticles">
+          <div class="col-3" v-for="article in articles">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
@@ -129,7 +129,7 @@
               this.rateTopics = data.rateTopics;
               this.socket.on("update", (article) => {
                 console.log(article); // Received new articles for given topic
-                if (this.articles.findIndex(ca => ca.id === article.id) < 0)
+                if (this.articles.findIndex(ca => ca.content.id === article.content.id) < 0)
                   this.articles.push(article);
               });
               this.socket.on("topicRegistered", (topic, publisher) => {
@@ -152,9 +152,6 @@
         computed: {
           remainTopics: function () {
             return this.allTopics.filter((topic) => !this.topics.find((t) => t.topic === topic));
-          },
-          orderedArticles: function () {
-            return this.articles.sort((a1, a2) => a1.content.rate <= a2.content.rate ? 1 : -1);
           },
         },
         methods: {

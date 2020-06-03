@@ -171,7 +171,7 @@ io.on("connection", (socket) => {
 
   socket.on("subscriber", (_, ack) => {
     log(`${username} registered as a subscriber!`);
-    const subscriber = users.get(username)! as Subscriber;
+    const subscriber = users.get(username) as Subscriber;
     if (subscriber) {
       subscriber.onMessage = (topic, content) => {
         socket.emit("update", { topic, content });
@@ -182,6 +182,7 @@ io.on("connection", (socket) => {
         userTopics.set(subscriber, []);
       }
       const rateTopics = userTopics.get(subscriber);
+      console.log(subscriber);
       const topics: { topic: string; publishers: string[] }[] = subscriber.getSubscriberTopics();
       const articles = topics.flatMap((topic) =>
         pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content }))

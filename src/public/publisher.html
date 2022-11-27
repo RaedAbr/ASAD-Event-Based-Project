@@ -104,7 +104,7 @@
       async mounted() {
         const accessToken = parseCookie(document.cookie).accessToken;
         return new Promise((resolve) => {
-          this.socket = io("localhost:3000", { query: { accessToken: accessToken } }); // connect
+          this.socket = io(document.location.origin, { query: { accessToken: accessToken } }); // connect
           this.socket.on("connect", () => {
             this.socket.emit("publisher", null, (data) => {
               this.username = data.username;

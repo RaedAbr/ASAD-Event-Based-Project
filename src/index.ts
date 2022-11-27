@@ -1,6 +1,6 @@
 import { ACCESS_TOKEN_SECRET } from './config';
 import bcrypt from 'bcrypt';
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import https from "https";
 import fs from "fs";
 import socketio from "socket.io";
@@ -19,6 +19,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(httpLogger);
+app.use(express.static('src/static'))
 const server = https.createServer({
   key: fs.readFileSync('server.key'),
   cert: fs.readFileSync('server.cert')

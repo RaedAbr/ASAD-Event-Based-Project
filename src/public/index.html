@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 
 <html lang="fr">
-  <head>
-    <title>ASAD - Event based</title>
-    <meta charset="UTF-8" />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    />
-    <!-- Custom styles for this template -->
-    <link href="https://getbootstrap.com/docs/4.4/examples/sign-in/signin.css" rel="stylesheet" />
-  </head>
-  <body class="text-center" cz-shortcut-listen="true">
-    <div id="app" style="margin-left: auto; margin-right: auto;">
-      <h1 class="h2 mb-3 font-weight-bold">ASAD - Event based</h1>
-      <keep-alive>
-        <component v-bind:is="component" v-on:change-vue="component = $event"></component>
-      </keep-alive>
-      <p class="mt-5 mb-3 text-muted">
-        Guillaume Hochet<br />Raed Abdennadher<br />Fabien Mottier<br />Grégory Dozot<br />
-        &copy; 2019-2020
-      </p>
-    </div>
 
-    <script type="text/x-template" id="index-template">
+<head>
+  <title>ASAD - Event based</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <!-- Custom styles for this template -->
+  <link href="css/signin.css" rel="stylesheet" />
+</head>
+
+<body class="text-center" cz-shortcut-listen="true">
+  <div id="app" style="margin-left: auto; margin-right: auto;">
+    <h1 class="h2 mb-3 font-weight-bold">ASAD - Event based</h1>
+    <keep-alive>
+      <component v-bind:is="component" v-on:change-vue="component = $event"></component>
+    </keep-alive>
+    <p class="mt-5 mb-3 text-muted">
+      Guillaume Hochet<br />Raed Abdennadher<br />Fabien Mottier<br />Grégory Dozot<br />
+      &copy; 2019-2020
+    </p>
+  </div>
+
+  <script type="text/x-template" id="index-template">
       <div class="form-signin">
         <button class="btn btn-lg btn-primary btn-block" v-on:click="$emit('change-vue', 'login')" type="button">Login</button>
         <button class="btn btn-lg btn-primary btn-block" v-on:click="$emit('change-vue', 'register')" type="button">Register</button>
       </div>
     </script>
 
-    <script type="text/x-template" id="login-template">
+  <script type="text/x-template" id="login-template">
       <div>
         <h1 class="h3 mb-3 font-weight-normal">Login</h1>
         <div class="form-group">
@@ -49,7 +47,6 @@
           <div class="form-group">
             <input type="password" name="password" id="password" class="form-control" placeholder="Password" v-model="password" autocomplete="off" required autofocus>
           </div>
-          <!-- <input type="hidden" v-model="accessToken" name="accessToken" id="accessToken"> -->
           <div class="form-group">
             <button class="btn btn-primary" type="submit" :disabled="username === ''">Login</button>
           </div>
@@ -57,7 +54,7 @@
       </div>
     </script>
 
-    <script type="text/x-template" id="register-template">
+  <script type="text/x-template" id="register-template">
       <div>
         <h1 class="h3 mb-3 font-weight-normal">Register</h1>
         <div class="form-group">
@@ -90,110 +87,99 @@
       </div>
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script type="text/javascript">
-      Vue.component("login", {
-        template: "#login-template",
-        data: function () {
-          return {
-            errors: [],
-            username: "",
-            password: "",
-            // accessToken: ""
-          };
-        },
-        methods: {
-          async login(e) {
-            e.preventDefault();
-            console.log("Try login " + this.username);
+  <script src="js/axios.min.js"></script>
+  <script src="js/vue@2.7.13.js"></script>
+  <script type="text/javascript">
+    Vue.component("login", {
+      template: "#login-template",
+      data: function () {
+        return {
+          errors: [],
+          username: "",
+          password: "",
+          // accessToken: ""
+        };
+      },
+      methods: {
+        async login(e) {
+          e.preventDefault();
 
-            await axios({
-              method: "post",
-              url: `/user/login`,
-              data: {
-                username: this.username,
-                password: this.password
-              }
+          await axios({
+            method: "post",
+            url: `/user/login`,
+            data: {
+              username: this.username,
+              password: this.password
+            }
+          })
+            .then((resp) => {
+              // resp.data will contains "publisher" or "subscriber"
+              // submit the form
+              // this.accessToken = resp.data.accessToken;
+              // window.localStorage.setItem("accessToken", this.accessToken);
+              e.target.action = resp.data.userType;
             })
-              .then((resp) => {
-                // resp.data will contains "publisher" or "subscriber"
-                // submit the form
-                // this.accessToken = resp.data.accessToken;
-                // window.localStorage.setItem("accessToken", this.accessToken);
-                e.target.action = resp.data.userType;
-              })
-              .then(() => {
-                e.target.submit();
-              })
-              .catch((err) => {
-                console.log(err);
-                this.errors = [];
-                this.errors.push(err.response.data);
-              });
-          },
-        },
-      });
-
-      Vue.component("register", {
-        template: "#register-template",
-        data: function () {
-          return {
-            errors: [],
-            username: "",
-            password: "",
-            userType: "",
-          };
-        },
-        methods: {
-          async register(e) {
-            e.preventDefault();
-            console.log("Try register " + this.username);
-
-            await axios({
-              method: "post",
-              url: `/user/register`,
-              data: {
-                userType: this.userType,
-                username: this.username,
-                password: this.password
-              }
+            .then(() => {
+              e.target.submit();
             })
-              .then((resp) => {
-                // submit the form
-                e.target.submit();
-              })
-              .catch((err) => {
-                console.log(err);
-                this.errors = [];
-                this.errors.push(err.response.data);
-              });
-          },
+            .catch((err) => {
+              console.error(err);
+              this.errors = [];
+              this.errors.push(err.response.data);
+            });
         },
-      });
+      },
+    });
 
-      Vue.component("index", {
-        template: "#index-template",
-      });
+    Vue.component("register", {
+      template: "#register-template",
+      data: function () {
+        return {
+          errors: [],
+          username: "",
+          password: "",
+          userType: "",
+        };
+      },
+      methods: {
+        async register(e) {
+          e.preventDefault();
 
-      new Vue({
-        el: "#app",
-        data() {
-          return {
-            component: "index",
-          };
+          await axios({
+            method: "post",
+            url: `/user/register`,
+            data: {
+              userType: this.userType,
+              username: this.username,
+              password: this.password
+            }
+          })
+            .then((resp) => {
+              // submit the form
+              e.target.submit();
+            })
+            .catch((err) => {
+              console.error(err);
+              this.errors = [];
+              this.errors.push(err.response.data);
+            });
         },
-      });
-    </script>
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+      },
+    });
+
+    Vue.component("index", {
+      template: "#index-template",
+    });
+
+    new Vue({
+      el: "#app",
+      data() {
+        return {
+          component: "index",
+        };
+      },
+    });
+  </script>
+</body>
+
 </html>

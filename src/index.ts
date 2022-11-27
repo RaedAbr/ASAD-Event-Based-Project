@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import express from "express";
 import https from "https";
 import fs from "fs";
-import socketio from "socket.io";
+const { Server } = require("socket.io");
 import jwt from "jsonwebtoken";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -24,7 +24,7 @@ const server = https.createServer({
   key: fs.readFileSync('server.key'),
   cert: fs.readFileSync('server.cert')
 }, app);
-const io = socketio(server);
+const io = new Server(server);
 
 const logSocket = (id: string, message: any) => logger.info(`[${id}] ${message}`);
 
@@ -163,7 +163,7 @@ app.all("/publisher", authenticateToken, (req, res) => {
 
 io.on("connection", (socket) => {
   const accessToken = socket.handshake.query.accessToken;
-  logger.info(`accessToken from socker handshake: ${accessToken}`);
+  logger.info(`accessToken from socket handshake: ${accessToken}`);
   const log = (message: any) => logSocket(socket.id, message);
   log("received connection, waiting for identification...");
 
@@ -183,7 +183,6 @@ io.on("connection", (socket) => {
         userTopics.set(subscriber, []);
       }
       const rateTopics = userTopics.get(subscriber);
-      console.log(subscriber);
       const topics: { topic: string; publishers: string[] }[] = subscriber.getSubscriberTopics();
       const articles = topics.flatMap((topic) =>
         pubsub.getContentList(topic.topic).map((content) => ({ topic: topic.topic, content }))

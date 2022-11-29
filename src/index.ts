@@ -1,8 +1,7 @@
 import { ACCESS_TOKEN_SECRET } from './config';
 import bcrypt from 'bcrypt';
 import express from "express";
-import https from "https";
-import fs from "fs";
+import http from "http";
 const { Server } = require("socket.io");
 import jwt from "jsonwebtoken";
 import bodyParser from "body-parser";
@@ -14,16 +13,15 @@ import User from "./model/User";
 import { logger, httpLogger } from "./Logger";
 import UserTopic from "./model/UserTopic";
 
+const PORT = process.env.PORT || 3000;
+
 const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(httpLogger);
-app.use(express.static('src/static'))
-const server = https.createServer({
-  key: fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.cert')
-}, app);
+app.use(express.static('src/public/static'));
+const server = http.createServer(app);
 const io = new Server(server);
 
 const logSocket = (id: string, message: any) => logger.info(`[${id}] ${message}`);
@@ -259,6 +257,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3000, () => {
-  logger.info("Listening on 3000");
+server.listen(PORT, () => {
+  logger.info(`Listening on ${PORT}`);
 });

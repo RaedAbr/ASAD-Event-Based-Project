@@ -5,7 +5,7 @@
 <head>
   <title>ASAD - Event based</title>
   <meta charset="UTF-8" />
-  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
   <!-- Custom styles for this template -->
   <link href="css/signin.css" rel="stylesheet" />
 </head>
@@ -87,8 +87,8 @@
       </div>
     </script>
 
-  <script src="js/axios.min.js"></script>
-  <script src="js/vue@2.7.13.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
   <script type="text/javascript">
     Vue.component("login", {
       template: "#login-template",
@@ -96,8 +96,7 @@
         return {
           errors: [],
           username: "",
-          password: "",
-          // accessToken: ""
+          password: ""
         };
       },
       methods: {
@@ -114,9 +113,6 @@
           })
             .then((resp) => {
               // resp.data will contains "publisher" or "subscriber"
-              // submit the form
-              // this.accessToken = resp.data.accessToken;
-              // window.localStorage.setItem("accessToken", this.accessToken);
               e.target.action = resp.data.userType;
             })
             .then(() => {

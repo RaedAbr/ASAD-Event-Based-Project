@@ -1,5 +1,5 @@
-import { createLogger, transports, format } from "winston";
-import morgan from "morgan";
+const { createLogger, transports, format } = require("winston");
+const morgan = require("morgan");
 
 const logger = createLogger({
   format: format.combine(
@@ -17,7 +17,7 @@ const httpLogger = morgan(":method :url :status :response-time ms - :res[content
   stream: logger.stream,
 });
 
-export default {
+module.exports = {
   logger,
   httpLogger,
 };

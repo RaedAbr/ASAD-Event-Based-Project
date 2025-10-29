@@ -40,7 +40,22 @@ const userTopics = new Map<User, Array<UserTopic>>();
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", version: APP_VERSION });
+  const uptime = process.uptime();
+  const memoryUsage = process.memoryUsage();
+  
+  res.json({
+    status: "ok",
+    version: APP_VERSION,
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(uptime),
+    memory: {
+      rss: Math.round(memoryUsage.rss / 1024 / 1024), // MB
+      heapTotal: Math.round(memoryUsage.heapTotal / 1024 / 1024), // MB
+      heapUsed: Math.round(memoryUsage.heapUsed / 1024 / 1024), // MB
+    },
+    activeUsers: users.size,
+    nodeVersion: process.version,
+  });
 });
 
 app.get("/version", (req, res) => {

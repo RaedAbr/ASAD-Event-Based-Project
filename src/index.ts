@@ -13,8 +13,13 @@ import Publisher from "./model/Publisher";
 import User from "./model/User";
 import loggerModule from "./Logger";
 import UserTopic from "./model/UserTopic";
+import fs from "fs";
 
 const { logger, httpLogger } = loggerModule;
+
+// Get app version from package.json
+const packageJson = JSON.parse(fs.readFileSync("package.json", "utf-8"));
+const APP_VERSION = packageJson.version;
 
 const app = express();
 app.use(express.json());
@@ -30,6 +35,18 @@ const logSocket = (id: string, message: any) => logger.info(`[${id}] ${message}`
 const users = new Map<string, User>();
 const pubsub = new EventManager();
 const userTopics = new Map<User, Array<UserTopic>>();
+////////////////////////////////////////////////////////////////////////////////////////////////
+// health & version routes
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", version: APP_VERSION });
+});
+
+app.get("/version", (req, res) => {
+  res.json({ version: APP_VERSION, name: packageJson.name });
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 // auth routes
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -287,5 +304,6 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT, () => {
+  logger.info(`ASAD Event-Based App v${APP_VERSION}`);
   logger.info(`Listening on ${PORT}`);
 });

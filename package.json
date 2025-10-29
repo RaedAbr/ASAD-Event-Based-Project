@@ -1,4 +1,6 @@
 {
+  "name": "asad-event-based-project",
+  "version": "2.1.0",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",

@@ -45,17 +45,21 @@ class Subscriber extends User implements ISubscriber {
   }
 
   sortArticles(articles, rate) {
-    articles.forEach(a => {
-      rate.forEach(r => {
+    articles.forEach((a) => {
+      rate.forEach((r) => {
         if (a.topic === r.topic) {
-          a.content = { text: a.content.text, publisher: a.content.publisher, id: a.content.id, rate: r.rate };
+          a.content = {
+            text: a.content.text,
+            publisher: a.content.publisher,
+            id: a.content.id,
+            rate: r.rate,
+          };
         }
-      })
-    })
+      });
+    });
 
-    return articles.sort((a1, a2) => a1.content.rate <= a2.content.rate ? 1 : -1);
+    return articles.sort((a1, a2) => (a1.content.rate <= a2.content.rate ? 1 : -1));
   }
-
 }
 
 export default Subscriber;

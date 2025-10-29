@@ -1,4 +1,4 @@
-import uniqid from 'uniqid';
+import uniqid from "uniqid";
 import Publisher from "./model/Publisher";
 import Subscriber from "./model/Subscriber";
 import ITopicData from "./model/ITopicData";
@@ -68,7 +68,10 @@ class EventManager {
     const topics: { topic: string; publishers: string[] }[] = [];
     this.topics.forEach((eventData, topic) => {
       if (eventData.subscribers.has(subscriber)) {
-        topics.push({ topic, publishers: Array.from(eventData.publishers.values()).map((p) => p.username) });
+        topics.push({
+          topic,
+          publishers: Array.from(eventData.publishers.values()).map((p) => p.username),
+        });
       }
     });
     return topics;
@@ -127,11 +130,11 @@ class EventManager {
    * @param {{text: string, publisher: string}} content Topic content
    * @memberof EventManager
    */
-  notify(topic: string, content: {text: string, publisher: string}) {
+  notify(topic: string, content: { text: string; publisher: string }) {
     this.getMatchingTopics(topic).forEach((topicData) => {
-      let elem = {text: content.text, publisher: content.publisher, id: uniqid(), rate: 3.0}
+      const elem = { text: content.text, publisher: content.publisher, id: uniqid(), rate: 3.0 };
       topicData.contentList.push(elem);
-      topicData.subscribers.forEach((s) => s.notify(topic, elem))
+      topicData.subscribers.forEach((s) => s.notify(topic, elem));
     });
   }
 

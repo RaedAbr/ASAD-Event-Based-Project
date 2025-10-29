@@ -1,5 +1,8 @@
 class UserTopic {
-    constructor(public topic: string, public rate: number) {}
+  constructor(
+    public topic: string,
+    public rate: number
+  ) {}
 }
 
-export default UserTopic
+export default UserTopic;

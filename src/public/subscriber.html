@@ -1,190 +1,218 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html lang="fr">
+  <head>
+    <title>ASAD - Subscriber</title>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<head>
-  <title>ASAD - Subscriber</title>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
-</head>
-
-<body>
-  <div class="container pt-5" id="app">
-    <div class="row">
-      <h1 class="col-auto mr-auto">
-        Welcome subscriber <em><ins>{{ username }}</ins></em>
-      </h1>
-      <div class="col-auto">
-        <button type="button" class="btn btn-danger" @click="logout">Logout</button>
-      </div>
-    </div>
-    <hr />
-    <div class="row">
-      <div class="col">
-        <h3>My topics</h3>
-        <ul class="list-group">
-          <li v-for="topic in topics" class="list-group-item">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">{{ topic.topic }}</h5>
-              <star-rating v-bind:star-size="20" v-bind:increment="0.5" v-bind:rating="getRating(topic)"
-                @rating-selected="setRating($event, topic)">
-              </star-rating>
-              <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic.topic)">remove</button>
-            </div>
-            <small><em><strong>Publishers:</strong></em> -
-              <span v-for="pub in topic.publishers">{{ pub }} - </span></small>
-          </li>
-        </ul>
-      </div>
-      <div class="col">
-        <h3>Topics list</h3>
-        <small>Click to subscribe</small>
-        <ul class="list-group">
-          <li class="list-group-item">
-            <button v-for="topic in remainTopics" @click="addTopic(topic)" type="button"
-              class="btn btn-primary badge badge-primary badge-pill">
-              {{ topic }}
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <hr />
-    <div>
+  <body>
+    <div class="container pt-5" id="app">
       <div class="row">
-        <div class="col-3" v-for="article in articles">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
-              <small>By <em><strong>{{ article.content.publisher }}</strong></em></small>
-              <p class="card-text">{{ article.content.text }}</p>
+        <h1 class="col-auto mr-auto">
+          Welcome subscriber <em><ins>{{ username }}</ins></em>
+        </h1>
+        <div class="col-auto">
+          <button type="button" class="btn btn-danger" @click="logout">Logout</button>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col">
+          <h3>My topics</h3>
+          <ul class="list-group">
+            <li v-for="topic in topics" class="list-group-item">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ topic.topic }}</h5>
+                <star-rating
+                  v-bind:star-size="20"
+                  v-bind:increment="0.5"
+                  v-bind:rating="getRating(topic)"
+                  @rating-selected="setRating($event, topic)"
+                >
+                </star-rating>
+                <button
+                  type="button"
+                  class="btn btn-danger btn-sm"
+                  @click="removeTopic(topic.topic)"
+                >
+                  remove
+                </button>
+              </div>
+              <small
+                ><em><strong>Publishers:</strong></em> -
+                <span v-for="pub in topic.publishers">{{ pub }} - </span></small
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Topics list</h3>
+          <small>Click to subscribe</small>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <button
+                v-for="topic in remainTopics"
+                @click="addTopic(topic)"
+                type="button"
+                class="btn btn-primary badge badge-primary badge-pill"
+              >
+                {{ topic }}
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <hr />
+      <div>
+        <div class="row">
+          <div class="col-3" v-for="article in articles">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
+                <small
+                  >By <em><strong>{{ article.content.publisher }}</strong></em></small
+                >
+                <p class="card-text">{{ article.content.text }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue-star-rating@1.7.0/dist/VueStarRating.umd.min.js"></script>
-  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
-  <script type="text/javascript">
-    Vue.component('star-rating', VueStarRating.default);
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-star-rating@1.7.0/dist/VueStarRating.umd.min.js"></script>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript">
+      Vue.component("star-rating", VueStarRating.default);
 
-    const parseCookie = str =>
-      str.split(';')
-        .map(v => v.split('='))
-        .reduce((acc, v) => {
-          acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-          return acc;
-        }, {});
+      const parseCookie = (str) =>
+        str
+          .split(";")
+          .map((v) => v.split("="))
+          .reduce((acc, v) => {
+            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+            return acc;
+          }, {});
 
-    const vue = new Vue({
-      el: "#app",
-      data() {
-        return {
-          topics: [], // Type: {topic: string, rate: float, publishers: string[]}[]
-          allTopics: [], // Type: string[]
-          articles: [],
-          username: "",
-          rateTopics: []
-        };
-      },
-      socket: null,
-      mounted() {
-        const accessToken = parseCookie(document.cookie).accessToken;
-        this.socket = io(document.location.origin, { query: { accessToken: accessToken } }); // connect
-        this.socket.on("connect", () => {
-          this.socket.emit("subscriber", null, (data) => {
-            this.username = data.username;
-            this.articles = data.articles;
-            this.topics = data.topics;
-            this.allTopics = data.allTopics;
-            this.rateTopics = data.rateTopics;
-            this.socket.on("update", (article) => {
-              if (this.articles.findIndex(ca => ca.content.id === article.content.id) < 0)
-                this.articles.push(article);
-            });
-            this.socket.on("topicRegistered", (topic, publisher) => {
-              if (!this.allTopics.includes(topic)) {
-                this.allTopics.push(topic);
-              }
-              if (this.topics.find((t) => t.topic === topic)) {
-                this.topics.find((t) => t.topic === topic).publishers.push(publisher);
-              }
-            });
-            this.socket.on("topicUnregistered", (topic, publisher) => {
-              if (this.topics.find((t) => t.topic === topic)) {
-                const publishers = this.topics.find((t) => t.topic === topic).publishers;
-                this.topics.find((t) => t.topic === topic).publishers = publishers.filter((p) => p !== publisher);
-              }
+      const vue = new Vue({
+        el: "#app",
+        data() {
+          return {
+            topics: [], // Type: {topic: string, rate: float, publishers: string[]}[]
+            allTopics: [], // Type: string[]
+            articles: [],
+            username: "",
+            rateTopics: [],
+          };
+        },
+        socket: null,
+        mounted() {
+          const accessToken = parseCookie(document.cookie).accessToken;
+          this.socket = io(document.location.origin, { query: { accessToken: accessToken } }); // connect
+          this.socket.on("connect", () => {
+            this.socket.emit("subscriber", null, (data) => {
+              this.username = data.username;
+              this.articles = data.articles;
+              this.topics = data.topics;
+              this.allTopics = data.allTopics;
+              this.rateTopics = data.rateTopics;
+              this.socket.on("update", (article) => {
+                if (this.articles.findIndex((ca) => ca.content.id === article.content.id) < 0)
+                  this.articles.push(article);
+              });
+              this.socket.on("topicRegistered", (topic, publisher) => {
+                if (!this.allTopics.includes(topic)) {
+                  this.allTopics.push(topic);
+                }
+                if (this.topics.find((t) => t.topic === topic)) {
+                  this.topics.find((t) => t.topic === topic).publishers.push(publisher);
+                }
+              });
+              this.socket.on("topicUnregistered", (topic, publisher) => {
+                if (this.topics.find((t) => t.topic === topic)) {
+                  const publishers = this.topics.find((t) => t.topic === topic).publishers;
+                  this.topics.find((t) => t.topic === topic).publishers = publishers.filter(
+                    (p) => p !== publisher
+                  );
+                }
+              });
             });
           });
-        });
-      },
-      computed: {
-        remainTopics: function () {
-          return this.allTopics.filter((topic) => !this.topics.find((t) => t.topic === topic));
         },
-      },
-      methods: {
-        addTopic(topic) {
-          if (this.socket !== null) {
-            this.socket.emit("subscribe", topic, (resp) => {
-              this.topics.push(resp.topic);
-              this.articles.push(...resp.articles);
-            });
-          }
+        computed: {
+          remainTopics: function () {
+            return this.allTopics.filter((topic) => !this.topics.find((t) => t.topic === topic));
+          },
         },
-        removeTopic(topic) {
-          this.topics = this.topics.filter((t) => t.topic !== topic);
-          this.articles = this.articles.filter((a) => a.topic !== topic);
-
-          if (this.socket !== null) {
-            this.socket.emit("unsubscribe", topic);
-          }
-        },
-        getRating(topic) {
-          let rate = 3.0;
-          let element = [];
-          this.rateTopics.forEach(e => {
-            if (e.topic === topic.topic) {
-              element.push(e);
+        methods: {
+          addTopic(topic) {
+            if (this.socket !== null) {
+              this.socket.emit("subscribe", topic, (resp) => {
+                this.topics.push(resp.topic);
+                this.articles.push(...resp.articles);
+              });
             }
-          });
-          if (element.length !== 0) {
-            rate = element.pop().rate;
-          }
-          return rate
-        },
-        setRating(rate, topic) {
-          if (this.socket !== null) {
-            this.socket.emit("updateRating", topic.topic, rate)
-          }
-          this.updateRating()
-        },
-        async updateRating() {
-          if (this.socket !== null) {
-            this.socket.emit("getRating", (resp) => {
-              this.rateTopics = resp.rateTopics;
-            });
-          }
-        },
-        async logout() {
-          await axios({
-            method: "delete",
-            url: `/user/logout`
-          })
-            .then((resp) => {
-              window.location.href = "/";
-            })
-            .catch((err) => {
-              console.error(err);
-            });
-        },
-      },
-    });
-  </script>
-</body>
+          },
+          removeTopic(topic) {
+            this.topics = this.topics.filter((t) => t.topic !== topic);
+            this.articles = this.articles.filter((a) => a.topic !== topic);
 
+            if (this.socket !== null) {
+              this.socket.emit("unsubscribe", topic);
+            }
+          },
+          getRating(topic) {
+            let rate = 3.0;
+            let element = [];
+            this.rateTopics.forEach((e) => {
+              if (e.topic === topic.topic) {
+                element.push(e);
+              }
+            });
+            if (element.length !== 0) {
+              rate = element.pop().rate;
+            }
+            return rate;
+          },
+          setRating(rate, topic) {
+            if (this.socket !== null) {
+              this.socket.emit("updateRating", topic.topic, rate);
+            }
+            this.updateRating();
+          },
+          async updateRating() {
+            if (this.socket !== null) {
+              this.socket.emit("getRating", (resp) => {
+                this.rateTopics = resp.rateTopics;
+              });
+            }
+          },
+          async logout() {
+            await axios({
+              method: "delete",
+              url: `/user/logout`,
+            })
+              .then((resp) => {
+                window.location.href = "/";
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          },
+        },
+      });
+    </script>
+  </body>
 </html>

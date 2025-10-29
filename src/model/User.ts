@@ -1,5 +1,9 @@
 class User {
-  constructor(public username: string, public password: string, public role: "publisher" | "subscriber") {}
+  constructor(
+    public username: string,
+    public password: string,
+    public role: "publisher" | "subscriber"
+  ) {}
 }
 
-export default User
+export default User;

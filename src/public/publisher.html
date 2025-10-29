@@ -1,181 +1,224 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html lang="fr">
+  <head>
+    <title>ASAD - Publisher</title>
+    <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+  </head>
 
-<head>
-  <title>ASAD - Publisher</title>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
-</head>
-
-<body>
-  <div class="container pt-5" id="app">
-    <div class="row">
-      <h1 class="col-auto mr-auto">
-        Welcome publisher <em><ins>{{ username }}</ins></em>
-      </h1>
-      <div class="col-auto">
-        <button type="button" class="btn btn-danger" @click="logout">Logout</button>
+  <body>
+    <div class="container pt-5" id="app">
+      <div class="row">
+        <h1 class="col-auto mr-auto">
+          Welcome publisher <em><ins>{{ username }}</ins></em>
+        </h1>
+        <div class="col-auto">
+          <button type="button" class="btn btn-danger" @click="logout">Logout</button>
+        </div>
       </div>
-    </div>
-    <hr />
-    <div class="row">
-      <div class="col">
-        <h3>Registered topics</h3>
-        <ul class="list-group">
-          <li class="list-group-item d-flex justify-content-between align-items-center" v-for="topic in topics"
-            :class="{ active: selectedTopic === topic }">
-            <div class="container">
-              <div class="row">
-                <div class="col" @click="selectedTopic = topic">
-                  {{ topic }}
-                </div>
-                <div class="col-3">
-                  <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">remove</button>
+      <hr />
+      <div class="row">
+        <div class="col">
+          <h3>Registered topics</h3>
+          <ul class="list-group">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-center"
+              v-for="topic in topics"
+              :class="{ active: selectedTopic === topic }"
+            >
+              <div class="container">
+                <div class="row">
+                  <div class="col" @click="selectedTopic = topic">{{ topic }}</div>
+                  <div class="col-3">
+                    <button type="button" class="btn btn-danger btn-sm" @click="removeTopic(topic)">
+                      remove
+                    </button>
+                  </div>
                 </div>
               </div>
+            </li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Register new topic</h3>
+          <div class="form-group">
+            <label for="topic">Topic name</label>
+            <div class="row no-gutters">
+              <div class="col flex-grow-1">
+                <input type="text" class="form-control" id="topic" v-model="newTopic" />
+              </div>
+              <div class="col">
+                <button type="button" class="btn btn-primary ml-2" @click="addTopic(newTopic)">
+                  Add
+                </button>
+              </div>
             </div>
-          </li>
-        </ul>
+          </div>
+          <h3>Existed topics list</h3>
+          <small>Click to subscribe</small>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <button
+                v-for="topic in remainTopics"
+                @click="addTopic(topic)"
+                type="button"
+                class="btn btn-primary badge badge-primary badge-pill"
+              >
+                {{ topic }}
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="col">
-        <h3>Register new topic</h3>
+      <hr />
+      <div>
         <div class="form-group">
-          <label for="topic">Topic name</label>
-          <div class="row no-gutters">
-            <div class="col flex-grow-1">
-              <input type="text" class="form-control" id="topic" v-model="newTopic" />
-            </div>
-            <div class="col">
-              <button type="button" class="btn btn-primary ml-2" @click="addTopic(newTopic)">Add</button>
+          <label for="content">Content</label>
+          <textarea class="form-control" id="content" rows="3" v-model="content"></textarea>
+          <button
+            type="button"
+            class="btn btn-primary ml-2"
+            @click="publish"
+            :disabled="selectedTopic === null"
+          >
+            Publish
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div>
+        <h3>Published content</h3>
+        <div class="row">
+          <div class="col-3" v-for="article in articles">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Topic: <strong>{{ article.topic }}</strong></h5>
+                <p class="card-text">{{ article.content.text }}</p>
+              </div>
             </div>
           </div>
         </div>
-        <h3>Existed topics list</h3>
-        <small>Click to subscribe</small>
-        <ul class="list-group">
-          <li class="list-group-item">
-            <button v-for="topic in remainTopics" @click="addTopic(topic)" type="button"
-              class="btn btn-primary badge badge-primary badge-pill">
-              {{ topic }}
-            </button>
-          </li>
-        </ul>
       </div>
     </div>
-    <hr />
-    <div>
-      <div class="form-group">
-        <label for="content">Content</label>
-        <textarea class="form-control" id="content" rows="3" v-model="content"></textarea>
-        <button type="button" class="btn btn-primary ml-2" @click="publish" :disabled="selectedTopic === null">
-          Publish
-        </button>
-      </div>
-    </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
-  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
-  <script type="text/javascript">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14"></script>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript">
+      const parseCookie = (str) =>
+        str
+          .split(";")
+          .map((v) => v.split("="))
+          .reduce((acc, v) => {
+            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+            return acc;
+          }, {});
 
-    const parseCookie = str =>
-      str.split(';')
-        .map(v => v.split('='))
-        .reduce((acc, v) => {
-          acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-          return acc;
-        }, {});
-
-    new Vue({
-      // router,
-      el: "#app",
-      data() {
-        return {
-          topics: [],
-          allTopics: [],
-          selectedTopic: null,
-          newTopic: "",
-          content: "",
-          username: "",
-        };
-      },
-      socket: null,
-      async mounted() {
-        const accessToken = parseCookie(document.cookie).accessToken;
-        return new Promise((resolve) => {
-          this.socket = io(document.location.origin, { query: { accessToken: accessToken } }); // connect
-          this.socket.on("connect", () => {
-            this.socket.emit("publisher", null, (data) => {
-              this.username = data.username;
-              this.topics = data.topics;
-              this.allTopics = data.allTopics;
-              resolve();
-            });
-            this.socket.on("topicRegistered", (topic, publisher) => {
-              if (!this.allTopics.includes(topic)) {
-                this.allTopics.push(topic);
-              }
-              if (this.topics.find((t) => t.topic == topic)) {
-                this.topics.find((t) => t.topic == topic).publishers.push(publisher);
-              }
-            });
-            this.socket.on("topicUnregistered", (topic, publisher) => {
-              if (this.topics.find((t) => t.topic == topic)) {
-                const publishers = this.topics.find((t) => t.topic == topic).publishers;
-                this.topics.find((t) => t.topic == topic).publishers = publishers.filter((p) => p != publisher);
-              }
+      new Vue({
+        // router,
+        el: "#app",
+        data() {
+          return {
+            topics: [],
+            allTopics: [],
+            selectedTopic: null,
+            newTopic: "",
+            content: "",
+            username: "",
+            articles: [],
+          };
+        },
+        socket: null,
+        async mounted() {
+          const accessToken = parseCookie(document.cookie).accessToken;
+          return new Promise((resolve) => {
+            this.socket = io(document.location.origin, { query: { accessToken: accessToken } }); // connect
+            this.socket.on("connect", () => {
+              this.socket.emit("publisher", null, (data) => {
+                this.username = data.username;
+                this.topics = data.topics;
+                this.allTopics = data.allTopics;
+                this.articles = data.articles;
+                resolve();
+              });
+              this.socket.on("update", (article) => {
+                if (this.articles.findIndex((ca) => ca.content.id === article.content.id) < 0)
+                  this.articles.push(article);
+              });
+              this.socket.on("topicRegistered", (topic, publisher) => {
+                if (!this.allTopics.includes(topic)) {
+                  this.allTopics.push(topic);
+                }
+                if (this.topics.find((t) => t.topic == topic)) {
+                  this.topics.find((t) => t.topic == topic).publishers.push(publisher);
+                }
+              });
+              this.socket.on("topicUnregistered", (topic, publisher) => {
+                if (this.topics.find((t) => t.topic == topic)) {
+                  const publishers = this.topics.find((t) => t.topic == topic).publishers;
+                  this.topics.find((t) => t.topic == topic).publishers = publishers.filter(
+                    (p) => p != publisher
+                  );
+                }
+              });
             });
           });
-        });
-      },
-      computed: {
-        remainTopics: function () {
-          return this.allTopics.filter((topic) => !this.topics.includes(topic));
         },
-      },
-      methods: {
-        addTopic(newTopic) {
-          const topic = newTopic.trim();
-          if (topic !== "" && !this.topics.includes(topic)) {
-            this.topics.push(topic);
-            this.selectedTopic = topic;
-            if (this.socket !== null) {
-              this.socket.emit("register", topic);
+        computed: {
+          remainTopics: function () {
+            return this.allTopics.filter((topic) => !this.topics.includes(topic));
+          },
+        },
+        methods: {
+          addTopic(newTopic) {
+            const topic = newTopic.trim();
+            if (topic !== "" && !this.topics.includes(topic)) {
+              this.topics.push(topic);
+              this.selectedTopic = topic;
+              if (this.socket !== null) {
+                this.socket.emit("register", topic);
+              }
             }
-          }
-          this.newTopic = "";
-        },
-        removeTopic(topic) {
-          this.topics = this.topics.filter((t) => t != topic);
-          this.selectedTopic = null;
+            this.newTopic = "";
+          },
+          removeTopic(topic) {
+            this.topics = this.topics.filter((t) => t != topic);
+            this.selectedTopic = null;
 
-          if (this.socket !== null) {
-            this.socket.emit("unregister", topic);
-          }
-        },
-        publish() {
-          const content = this.content.trim();
-          if (content !== "" && this.selectedTopic != null) {
-            this.socket.emit("publish", this.selectedTopic, content);
-          }
-          this.content = "";
-        },
-        async logout() {
-          await axios({
-            method: "delete",
-            url: `/user/logout`
-          })
-            .then((resp) => {
-              window.location.href = "/";
+            if (this.socket !== null) {
+              this.socket.emit("unregister", topic);
+            }
+          },
+          publish() {
+            const content = this.content.trim();
+            if (content !== "" && this.selectedTopic != null) {
+              this.socket.emit("publish", this.selectedTopic, content);
+            }
+            this.content = "";
+          },
+          async logout() {
+            await axios({
+              method: "delete",
+              url: `/user/logout`,
             })
-            .catch((err) => {
-              console.error(err);
-            });
+              .then((resp) => {
+                window.location.href = "/";
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          },
         },
-      },
-    });
-  </script>
-</body>
-
+      });
+    </script>
+  </body>
 </html>

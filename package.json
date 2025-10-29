@@ -1,34 +1,41 @@
 {
   "dependencies": {
-    "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.2",
-    "cookie-parser": "^1.4.6",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0",
-    "socket.io": "^4.7.5",
+    "morgan": "^1.10.1",
+    "socket.io": "^4.8.1",
     "uniqid": "^5.4.0",
-    "winston": "^3.13.0"
+    "winston": "^3.18.3"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.6",
+    "@eslint/js": "^9.38.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/uniqid": "^5.3.4",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
     "copyfiles": "^2.4.1",
-    "nodemon": "^3.1.4",
-    "rimraf": "^5.0.7",
+    "eslint": "^9.38.0",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
   },
   "scripts": {
-    "prestart": "npm run build",
+    "prestart": "pnpm run build",
     "start": "node build/index.js",
     "start:dev": "nodemon",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
     "clean": "rimraf ./build",
-    "copy-files": "copyfiles -u 1 src/**/*.js src/**/*.css src/**/*.html src/.env ./build",
-    "prebuild": "npm run clean",
-    "build": "tsc && npm run copy-files"
+    "copy-files": "copyfiles -u 1 src/**/*.js src/**/*.css src/**/*.html ./build && copyfiles .env ./build",
+    "prebuild": "pnpm run clean",
+    "build": "tsc && pnpm run copy-files"
   }
 }

@@ -45,8 +45,9 @@ export function createTokenPayload(username: string, role: "publisher" | "subscr
 export function verifyToken(token: string): any {
   try {
     return jwt.verify(token, ACCESS_TOKEN_SECRET);
-  } catch (err) {
-    logger.error(`Token verification failed: ${err.message}`);
+  } catch {
+    // Log generic error to avoid information disclosure
+    logger.error("Token verification failed - invalid or expired token");
     return null;
   }
 }

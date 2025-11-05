@@ -24,7 +24,7 @@ This document outlines the security improvements made to the ASAD Event-Based Pr
 
 #### Input Validation
 - **Usernames**: Must be 3-30 characters, alphanumeric with underscores and hyphens only
-- **Passwords**: Minimum 8 characters required
+- **Passwords**: Minimum 8 characters required with at least one uppercase letter, one lowercase letter, one digit, and one special character
 - **Topic Names**: Must be 2-50 characters, alphanumeric with spaces, underscores, and hyphens
 - **Content**: Limited to 1-1000 characters
 - **Ratings**: Validated to be numbers between 0-5
@@ -34,6 +34,7 @@ This document outlines the security improvements made to the ASAD Event-Based Pr
 #### Helmet.js
 - Content Security Policy (CSP) configured to restrict script and style sources
 - Protection against common web vulnerabilities
+- **Note**: CSP currently uses `'unsafe-inline'` for scripts and styles due to legacy inline code. For production, consider moving inline scripts to external files or using CSP nonces.
 
 #### Rate Limiting
 - Configured to limit requests to 100 per 15-minute window

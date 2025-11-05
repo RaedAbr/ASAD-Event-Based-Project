@@ -40,6 +40,11 @@ const APP_VERSION = packageJson.version;
 const app = express();
 
 // Security middleware
+// Note: CSP with 'unsafe-inline' is a compromise for this legacy application
+// For better security in production, consider:
+// 1. Moving all inline scripts/styles to external files
+// 2. Using CSP nonces for unavoidable inline scripts
+// 3. Refactoring Vue.js components to use proper build process
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -123,7 +128,7 @@ app.post("/user/register", async (req, res) => {
   
   // Validate password
   if (!validatePassword(password)) {
-    return res.status(400).send("Invalid password. Must be at least 8 characters.");
+    return res.status(400).send("Invalid password. Must be at least 8 characters and contain uppercase, lowercase, digit, and special character.");
   }
   
   // Validate user type
